@@ -1,12 +1,12 @@
 {
-  "name":         "phil-friderici-desktop",
+  "name":         "phil-friderici-gnomish",
   "version":      "0.0.1",
   "author":       "Phil-Friderici",
-  "summary":      "manage gnome desktop",
-  "description":  "manage gnome desktop settings and application icons",
+  "summary":      "manage gnome and mate desktop",
+  "description":  "manage gnome and mate desktop settings and application icons",
   "license":      "Apache-2.0",
-  "source":       "https://github.com/Phil-Friderici/puppet-module-desktop.git",
-  "project_page": "https://github.com/Phil-Friderici/puppet-module-desktop",
+  "source":       "https://github.com/Phil-Friderici/puppet-module-gnomish.git",
+  "project_page": "https://github.com/Phil-Friderici/puppet-module-gnomish",
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
