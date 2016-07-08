@@ -7,6 +7,7 @@ describe 'gnomish' do
     it { should have_package_resource_count(0) }
     it { should have_gnomish__application_resource_count(0) }
     it { should have_gnomish__gnome__gconf_resource_count(0) }
+    it { should have_gnomish__mate__mateconf_resource_count(0) }
   end
 
   describe 'with applications set to valid hash' do
@@ -107,6 +108,7 @@ describe 'gnomish' do
     let(:params) { { :desktop => 'gnome' } }
     it { should compile.with_all_deps }
     it { should contain_class('gnomish::gnome') }
+    it { should_not contain_class('gnomish::mate') }
 
     context 'with settings set to valid hash' do
       context 'when settings_hiera_merge set to <true>' do
@@ -201,6 +203,13 @@ describe 'gnomish' do
     end
   end
 
+  describe 'with desktop set to valid string <mate>' do
+    let(:params) { { :desktop => 'mate' } }
+    it { should compile.with_all_deps }
+    it { should contain_class('gnomish::mate') }
+    it { should_not contain_class('gnomish::gnome') }
+  end
+
   describe 'with packages_add set to valid array %w(rspec testing)' do
     let(:params) { { :packages_add => %w(rspec testing) } }
 
@@ -260,7 +269,7 @@ describe 'gnomish' do
       },
       'regex desktop' => {
         :name    => %w(desktop),
-        :valid   => %w(gnome),
+        :valid   => %w(gnome mate),
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
         :message => 'must be <gnome> or <mate> and is set to',
       },

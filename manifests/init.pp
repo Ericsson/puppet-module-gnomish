@@ -41,7 +41,7 @@ class gnomish (
     $settings_real,
   )
 
-  validate_re($desktop, '^gnome$', "gnomish::gnome must be <gnome> or <mate> and is set to ${desktop}")
+  validate_re($desktop, '^(gnome|mate)$', "gnomish::gnome must be <gnome> or <mate> and is set to ${desktop}")
 
   # functionality
   package { $packages_add:
@@ -58,6 +58,10 @@ class gnomish (
     'gnome': {
       include ::gnomish::gnome
       create_resources('gnomish::gnome::gconf', $settings_real)
+    }
+    'mate': {
+      include ::gnomish::mate
+      create_resources('gnomish::mate::mateconf', $settings_real)
     }
     default: {
       # nothing to do, have a cup of good tea
