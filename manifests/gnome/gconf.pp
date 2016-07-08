@@ -27,7 +27,7 @@ define gnomish::gnome::gconf (
   $value_string = "${value}" # lint:ignore:only_variable_string
 
   # variable validation
-  validate_string($value_string)
+  validate_string($value)
   validate_absolute_path($config_real)
   validate_string($key)
   validate_re($type_real, '^(bool|int|float|string)', "gnomish::gnome::gconf::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to ${type_real}")

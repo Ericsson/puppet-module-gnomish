@@ -60,7 +60,7 @@ class gnomish::gnome (
   # functionality
   if $gconf_name != undef {
     file_line { 'set_gconf_name':
-      ensure => file,
+      ensure => present,
       path   => '/etc/gconf/2/path',
       line   => "xml:readwrite:${gconf_name}",
       match  => '^xml:readwrite:',
