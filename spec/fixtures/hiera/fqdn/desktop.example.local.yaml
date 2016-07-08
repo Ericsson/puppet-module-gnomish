@@ -1,0 +1,13 @@
+---
+gnomish::applications:
+  'from_hiera_fqdn':
+    ensure:           'file'
+    entry_categories: 'from_hiera'
+    entry_exec:       'exec'
+    entry_icon:       'icon'
+
+gnomish::settings:
+  'from_hiera_fqdn':
+    key:    '/rspec_from_hiera_fqdn'
+    value:  'test'
+    config: 'mandatory'

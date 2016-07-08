@@ -1,0 +1,69 @@
+define gnomish::application (
+  # desktop file metadata:
+  $entry_categories = undef,
+  $entry_exec       = undef,
+  $entry_icon       = undef,
+  $entry_lines      = [],
+  $entry_name       = $name,
+  $entry_terminal   = false,
+  $entry_type       = 'Application',
+  # desktop file resource attributes:
+  $ensure           = 'file',
+  $path             = "/usr/share/applications/${name}.desktop",
+) {
+
+  # <Variable validation>
+  validate_absolute_path($path)
+  validate_re($ensure,'^(absent|file)$', "gnomish::application::ensure is must be <file> or <absent> and is set to ${ensure}.")
+
+  # validate mandatory application settings only when needed
+  if $ensure == 'file' {
+    validate_array($entry_lines)
+    validate_bool($entry_terminal)
+
+    if $entry_categories == undef or $entry_categories == '' {
+      fail('gnomish::application::entry_categories must not be empty when gnomish::application::ensure is set to <file>.')
+    }
+    if $entry_exec == undef or $entry_exec == '' {
+      fail('gnomish::application::entry_exec must not be empty when gnomish::application::ensure is set to <file>.')
+    }
+    if $entry_icon == undef or $entry_icon == '' {
+      fail('gnomish::application::entry_icon must not be empty when gnomish::application::ensure is set to <file>.')
+    }
+    if $entry_name == undef or $entry_name == '' {
+      fail('gnomish::application::entry_name must not be empty when gnomish::application::ensure is set to <file>.')
+    }
+    if $entry_type == undef or $entry_type == '' {
+      fail('gnomish::application::entry_type must not be empty when gnomish::application::ensure is set to <file>.')
+    }
+  }
+
+  # <functionality>
+  # ensure that no basic settings sneaked in with $entry_lines to avoid duplicates
+  if size($entry_lines) != size(reject($entry_lines, '^(?i:Name|Icon|Exec|Categories|Type|Terminal)=.*')) {
+    fail('gnomish::application::entry_lines does contain one of the basic settings. Please use the specific $entry_* parameters instead.')
+  }
+
+  if $ensure == 'file' {
+    $_categories = [ "Categories=${entry_categories}" ]
+    $_exec       = [ "Exec=${entry_exec}" ]
+    $_icon       = [ "Icon=${entry_icon}" ]
+    $_name       = [ "Name=${entry_name}" ]
+    $_terminal   = [ "Terminal=${entry_terminal}" ]
+    $_type       = [ "Type=${entry_type}" ]
+
+    $entry_lines_real = union($_categories, $_exec, $_icon, $_name, $_terminal, $_type, $entry_lines)
+  }
+  else {
+    $entry_lines_real = []
+  }
+
+  file { "desktop_app_${name}" :
+    ensure  => $ensure,
+    path    => $path,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('gnomish/application.erb'),
+  }
+}
