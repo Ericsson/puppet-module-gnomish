@@ -23,7 +23,7 @@ class gnomish (
       'set wallpaper' => {
         key     => "/desktop/${desktop}/background/picture_filename",
         value   => $wallpaper_path,
-      }
+      },
     }
   }
   else {
@@ -45,10 +45,6 @@ class gnomish (
   }
 
   # variable validations
-  if $wallpaper_path != undef {
-    validate_absolute_path($wallpaper_path)
-  }
-
   validate_array(
     $packages_add,
     $packages_remove,
@@ -69,6 +65,10 @@ class gnomish (
   )
 
   validate_re($desktop, '^(gnome|mate)$', "gnomish::desktop must be <gnome> or <mate> and is set to ${desktop}")
+
+  if $wallpaper_path != undef {
+    validate_absolute_path($wallpaper_path)
+  }
 
   # conditional checks
   if $wallpaper_source != undef and $wallpaper_path == undef {
