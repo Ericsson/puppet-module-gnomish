@@ -8,9 +8,28 @@ class gnomish (
   $packages_remove          = [],
   $settings_xml             = {},
   $settings_xml_hiera_merge = true,
+  $wallpaper_path           = undef,
+  $wallpaper_source         = undef,
 ) {
 
   # variable preparations
+  $conftool = $desktop ? {
+    'mate'  => 'mateconftool_2',
+    default => 'gconftool_2',
+  }
+
+  if $wallpaper_path != undef {
+    $settings_xml_wallpaper = {
+      'set wallpaper' => {
+        key     => "/desktop/${desktop}/background/picture_filename",
+        value   => $wallpaper_path,
+      },
+    }
+  }
+  else {
+    $settings_xml_wallpaper = {}
+  }
+
   if $applications_hiera_merge == true {
     $applications_real = hiera_hash(gnomish::applications, {} )
   }
@@ -19,10 +38,10 @@ class gnomish (
   }
 
   if $settings_xml_hiera_merge == true {
-    $settings_xml_real = hiera_hash(gnomish::settings_xml, {} )
+    $settings_xml_hiera = hiera_hash(gnomish::settings_xml, {} )
   }
   else {
-    $settings_xml_real = $settings_xml
+    $settings_xml_hiera = $settings_xml
   }
 
   # variable validations
@@ -38,10 +57,23 @@ class gnomish (
 
   validate_hash(
     $applications_real,
-    $settings_xml_real,
+    $settings_xml_hiera,
+  )
+
+  validate_string(
+    $wallpaper_source,
   )
 
   validate_re($desktop, '^(gnome|mate)$', "gnomish::desktop must be <gnome> or <mate> and is set to ${desktop}")
+
+  if $wallpaper_path != undef {
+    validate_absolute_path($wallpaper_path)
+  }
+
+  # conditional checks
+  if $wallpaper_source != undef and $wallpaper_path == undef {
+    fail('gnomish::wallpaper_path is needed but undefiend. Please define a valid path.')
+  }
 
   # functionality
   package { $packages_add:
@@ -52,19 +84,22 @@ class gnomish (
     ensure => absent,
   }
 
+  include "::gnomish::${desktop}"
   create_resources('gnomish::application', $applications_real)
 
-  case $desktop {
-    'gnome': {
-      include ::gnomish::gnome
-      create_resources('gnomish::gnome::gconftool_2', $settings_xml_real)
-    }
-    'mate': {
-      include ::gnomish::mate
-      create_resources('gnomish::mate::mateconftool_2', $settings_xml_real)
-    }
-    default: {
-      # nothing to do, have a cup of good tea
+  $settings_xml_real = merge($settings_xml_wallpaper,  $settings_xml_hiera)
+  create_resources("gnomish::${desktop}::${conftool}", $settings_xml_real)
+
+  if $wallpaper_source != undef {
+    file { 'wallpaper':
+      ensure => file,
+      path   => $wallpaper_path,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0644',
+      source => $wallpaper_source,
+      before => "Gnomish::${(capitalize($desktop))}::${(capitalize($conftool))}[set wallpaper]",
     }
   }
+
 }
