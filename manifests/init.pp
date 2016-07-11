@@ -57,7 +57,7 @@ class gnomish (
   case $desktop {
     'gnome': {
       include ::gnomish::gnome
-      create_resources('gnomish::gnome::gconf', $settings_xml_real)
+      create_resources('gnomish::gnome::gconftool_2', $settings_xml_real)
     }
     'mate': {
       include ::gnomish::mate

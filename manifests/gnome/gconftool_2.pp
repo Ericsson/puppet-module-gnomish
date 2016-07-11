@@ -1,4 +1,4 @@
-define gnomish::gnome::gconf (
+define gnomish::gnome::gconftool_2 (
   $value,
   $config = 'defaults',
   $key    = $name,
@@ -30,9 +30,9 @@ define gnomish::gnome::gconf (
   validate_string($value_string)
   validate_absolute_path($config_real)
   if is_string($key) == false {
-    fail('gnomish::gnome::gconf::key is not a string.')
+    fail('gnomish::gnome::gconftool_2::key is not a string.')
   }
-  validate_re($type_real, '^(bool|int|float|string)', "gnomish::gnome::gconf::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to ${type_real}")
+  validate_re($type_real, '^(bool|int|float|string)', "gnomish::gnome::gconftool_2::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to ${type_real}")
 
   # functionality
   exec { "gconftool-2 ${key}" :

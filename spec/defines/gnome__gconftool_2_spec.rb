@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe 'gnomish::gnome::gconf' do
+describe 'gnomish::gnome::gconftool_2' do
   let(:title) { '/desktop/rspec' }
 
   describe 'with defaults for all parameters' do
@@ -58,7 +58,7 @@ describe 'gnomish::gnome::gconf' do
         :name    => %w(type),
         :valid   => %w(auto bool boolean int integer float string),
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
-        :message => 'gnomish::gnome::gconf::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to',
+        :message => 'gnomish::gnome::gconftool_2::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to',
       },
     }
 

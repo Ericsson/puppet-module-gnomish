@@ -79,10 +79,10 @@ class gnomish::gnome (
   }
 
   create_resources('gnomish::application', $applications_real)
-  create_resources('gnomish::gnome::gconf', $settings_xml_real)
+  create_resources('gnomish::gnome::gconftool_2', $settings_xml_real)
 
   if $wallpaper_path != undef {
-    gnomish::gnome::gconf { 'set wallpaper':
+    gnomish::gnome::gconftool_2 { 'set wallpaper':
       key    => '/desktop/gnome/background/picture_filename',
       value  => $wallpaper_path,
       type   => 'string',
@@ -98,7 +98,7 @@ class gnomish::gnome (
       group  => 'root',
       mode   => '0644',
       source => $wallpaper_source,
-      before => Gnomish::Gnome::Gconf['set wallpaper'],
+      before => Gnomish::Gnome::Gconftool_2['set wallpaper'],
     }
   }
 }
