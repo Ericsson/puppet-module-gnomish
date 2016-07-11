@@ -41,7 +41,7 @@ class gnomish (
     $settings_xml_real,
   )
 
-  validate_re($desktop, '^(gnome|mate)$', "gnomish::gnome must be <gnome> or <mate> and is set to ${desktop}")
+  validate_re($desktop, '^(gnome|mate)$', "gnomish::desktop must be <gnome> or <mate> and is set to ${desktop}")
 
   # functionality
   package { $packages_add:
