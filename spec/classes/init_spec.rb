@@ -7,7 +7,7 @@ describe 'gnomish' do
     it { should have_package_resource_count(0) }
     it { should have_gnomish__application_resource_count(0) }
     it { should have_gnomish__gnome__gconf_resource_count(0) }
-    it { should have_gnomish__mate__mateconf_resource_count(0) }
+    it { should have_gnomish__mate__mateconftool_2_resource_count(0) }
   end
 
   describe 'with applications set to valid hash' do
@@ -110,30 +110,30 @@ describe 'gnomish' do
     it { should contain_class('gnomish::gnome') }
     it { should_not contain_class('gnomish::mate') }
 
-    context 'with settings set to valid hash' do
-      context 'when settings_hiera_merge set to <true>' do
+    context 'with settings_xml set to valid hash' do
+      context 'when settings_xml_hiera_merge set to <true>' do
         let(:params) do
           {
-            :settings => {
+            :settings_xml => {
               'from_param' => {
                 'value'  => 'from_param',
               }
             },
-            :settings_hiera_merge => true,
+            :settings_xml_hiera_merge => true,
             :desktop              => 'gnome',
           }
         end
         it { should have_gnomish__gnome__gconf_resource_count(0) }
       end
-      context 'when settings_hiera_merge set to <false>' do
+      context 'when settings_xml_hiera_merge set to <false>' do
         let(:params) do
           {
-            :settings => {
+            :settings_xml => {
               'from_param' => {
                 'value'  => 'from_param',
               }
             },
-            :settings_hiera_merge => false,
+            :settings_xml_hiera_merge => false,
             :desktop              => 'gnome',
           }
         end
@@ -147,7 +147,7 @@ describe 'gnomish' do
       end
     end
 
-    context 'with settings provided from hiera' do
+    context 'with settings_xml provided from hiera' do
       let(:facts) do
         {
           :fqdn  => 'desktop.example.local',
@@ -155,10 +155,10 @@ describe 'gnomish' do
         }
       end
 
-      context 'when settings_hiera_merge set to <true>' do
+      context 'when settings_xml_hiera_merge set to <true>' do
         let(:params) do
           {
-            :settings_hiera_merge => true,
+            :settings_xml_hiera_merge => true,
             :desktop              => 'gnome',
           }
         end
@@ -182,10 +182,10 @@ describe 'gnomish' do
         end
       end
 
-      context 'when settings_hiera_merge set to <false>' do
+      context 'when settings_xml_hiera_merge set to <false>' do
         let(:params) do
           {
-            :settings_hiera_merge => false,
+            :settings_xml_hiera_merge => false,
             :desktop              => 'gnome',
           }
         end
@@ -255,14 +255,14 @@ describe 'gnomish' do
         :message => 'is not an Array',
       },
       'boolean' => {
-        :name    => %w(applications_hiera_merge settings_hiera_merge),
+        :name    => %w(applications_hiera_merge settings_xml_hiera_merge),
         :valid   => [true, false],
         :invalid => ['true', 'false', 'string', %w(array), { 'ha' => 'sh' }, 3, 2.42, nil],
         :message => '(is not a boolean|Unknown type of boolean given)',
       },
       'hash' => {
-        :name    => %w(applications settings),
-        :params  => { :applications_hiera_merge => false, :settings_hiera_merge => false },
+        :name    => %w(applications settings_xml),
+        :params  => { :applications_hiera_merge => false, :settings_xml_hiera_merge => false },
         :valid   => [], # valid hashes are to complex to block test them here. Subclasses have their own specific spec tests anyway.
         :invalid => ['string', 3, 2.42, %w(array), true, false, nil],
         :message => 'is not a Hash',

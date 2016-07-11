@@ -38,8 +38,6 @@ define gnomish::gnome::gconf (
   exec { "gconftool-2 ${key}" :
     command => "gconftool-2 --direct --config-source xml:readwrite:${config_real} --type ${type_real} --set '${key}' '${value_string}'",
     unless  => "test \"$(gconftool-2 --get ${key})\" == \"${value_string}\"",
-#   test is faster than grep
-#    unless  => "gconftool-2 --direct --config-source xml:readonly:${config_real} --get ${key} | grep '^${value_string}$'",
     path    => '/bin:/sbin:/usr/bin:/usr/sbin',
   }
 }

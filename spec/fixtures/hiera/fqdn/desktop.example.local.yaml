@@ -6,7 +6,7 @@ gnomish::applications:
     entry_exec:       'exec'
     entry_icon:       'icon'
 
-gnomish::settings:
+gnomish::settings_xml:
   'from_hiera_fqdn':
     key:    '/rspec_from_hiera_fqdn'
     value:  'test'

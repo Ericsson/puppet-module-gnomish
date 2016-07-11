@@ -6,8 +6,8 @@ class gnomish (
   $desktop                  = 'gnome',
   $packages_add             = [],
   $packages_remove          = [],
-  $settings                 = {},
-  $settings_hiera_merge     = true,
+  $settings_xml             = {},
+  $settings_xml_hiera_merge = true,
 ) {
 
   # variable preparations
@@ -18,11 +18,11 @@ class gnomish (
     $applications_real = $applications
   }
 
-  if $settings_hiera_merge == true {
-    $settings_real = hiera_hash(gnomish::settings, {} )
+  if $settings_xml_hiera_merge == true {
+    $settings_xml_real = hiera_hash(gnomish::settings_xml, {} )
   }
   else {
-    $settings_real = $settings
+    $settings_xml_real = $settings_xml
   }
 
   # variable validations
@@ -33,12 +33,12 @@ class gnomish (
 
   validate_bool(
     $applications_hiera_merge,
-    $settings_hiera_merge,
+    $settings_xml_hiera_merge,
   )
 
   validate_hash(
     $applications_real,
-    $settings_real,
+    $settings_xml_real,
   )
 
   validate_re($desktop, '^(gnome|mate)$', "gnomish::gnome must be <gnome> or <mate> and is set to ${desktop}")
@@ -57,11 +57,11 @@ class gnomish (
   case $desktop {
     'gnome': {
       include ::gnomish::gnome
-      create_resources('gnomish::gnome::gconf', $settings_real)
+      create_resources('gnomish::gnome::gconf', $settings_xml_real)
     }
     'mate': {
       include ::gnomish::mate
-      create_resources('gnomish::mate::mateconf', $settings_real)
+      create_resources('gnomish::mate::mateconftool_2', $settings_xml_real)
     }
     default: {
       # nothing to do, have a cup of good tea
