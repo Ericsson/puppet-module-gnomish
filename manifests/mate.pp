@@ -79,7 +79,7 @@ class gnomish::mate (
 #  }
 
   create_resources('gnomish::application', $applications_real)
-  create_resources('gnomish::mate::mateconf', $settings_xml_real)
+  create_resources('gnomish::mate::mateconftool_2', $settings_xml_real)
 
 #  if $wallpaper_path != undef {
 #    gnomish::mate::gconf { 'set wallpaper':
