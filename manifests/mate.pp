@@ -4,8 +4,8 @@ class gnomish::mate (
   $applications             = {},
   $applications_hiera_merge = true,
 #  $gconf_name               = undef,
-  $settings                 = {},
-  $settings_hiera_merge     = true,
+  $settings_xml                 = {},
+  $settings_xml_hiera_merge     = true,
 #  $system_items_modify      = false,
 #  $system_items_path        = '/usr/share/gnome-main-menu/system-items.xbel',
 #  $system_items_source      = 'puppet:///modules/gnomish/gnome/SLE11-system-items.xbel.erb',
@@ -21,11 +21,11 @@ class gnomish::mate (
     $applications_real = $applications
   }
 
-  if $settings_hiera_merge == true {
-    $settings_real = hiera_hash(gnomish::mate::settings, {} )
+  if $settings_xml_hiera_merge == true {
+    $settings_xml_real = hiera_hash(gnomish::mate::settings_xml, {} )
   }
   else {
-    $settings_real = $settings
+    $settings_xml_real = $settings_xml
   }
 
   # variable validations
@@ -38,12 +38,12 @@ class gnomish::mate (
   validate_bool(
 #    $system_items_modify,
     $applications_hiera_merge,
-    $settings_hiera_merge,
+    $settings_xml_hiera_merge,
   )
 
   validate_hash(
     $applications_real,
-    $settings_real,
+    $settings_xml_real,
   )
 
 #  validate_string(
@@ -54,7 +54,7 @@ class gnomish::mate (
 
   # conditional checks
 #  if $wallpaper_source != undef and $wallpaper_path == undef {
-#    fail('gnomish::mate::settings::wallpaper_path is needed but undefiend. Please define a valid path.')
+#    fail('gnomish::mate::wallpaper_path is needed but undefiend. Please define a valid path.')
 #  }
 
   # functionality
@@ -79,7 +79,7 @@ class gnomish::mate (
 #  }
 
   create_resources('gnomish::application', $applications_real)
-  create_resources('gnomish::mate::mateconf', $settings_real)
+  create_resources('gnomish::mate::mateconftool_2', $settings_xml_real)
 
 #  if $wallpaper_path != undef {
 #    gnomish::mate::gconf { 'set wallpaper':

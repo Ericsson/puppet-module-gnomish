@@ -4,8 +4,8 @@ class gnomish::gnome (
   $applications             = {},
   $applications_hiera_merge = true,
   $gconf_name               = undef,
-  $settings                 = {},
-  $settings_hiera_merge     = true,
+  $settings_xml             = {},
+  $settings_xml_hiera_merge = true,
   $system_items_modify      = false,
   $system_items_path        = '/usr/share/gnome-main-menu/system-items.xbel',
   $system_items_source      = 'puppet:///modules/gnomish/gnome/SLE11-system-items.xbel.erb',
@@ -21,11 +21,11 @@ class gnomish::gnome (
     $applications_real = $applications
   }
 
-  if $settings_hiera_merge == true {
-    $settings_real = hiera_hash(gnomish::gnome::settings, {} )
+  if $settings_xml_hiera_merge == true {
+    $settings_xml_real = hiera_hash(gnomish::gnome::settings_xml, {} )
   }
   else {
-    $settings_real = $settings
+    $settings_xml_real = $settings_xml
   }
 
   # variable validations
@@ -38,12 +38,12 @@ class gnomish::gnome (
   validate_bool(
     $system_items_modify,
     $applications_hiera_merge,
-    $settings_hiera_merge,
+    $settings_xml_hiera_merge,
   )
 
   validate_hash(
     $applications_real,
-    $settings_real,
+    $settings_xml_real,
   )
 
   validate_string(
@@ -54,7 +54,7 @@ class gnomish::gnome (
 
   # conditional checks
   if $wallpaper_source != undef and $wallpaper_path == undef {
-    fail('gnomish::gnome::settings::wallpaper_path is needed but undefiend. Please define a valid path.')
+    fail('gnomish::gnome::wallpaper_path is needed but undefiend. Please define a valid path.')
   }
 
   # functionality
@@ -79,10 +79,10 @@ class gnomish::gnome (
   }
 
   create_resources('gnomish::application', $applications_real)
-  create_resources('gnomish::gnome::gconf', $settings_real)
+  create_resources('gnomish::gnome::gconftool_2', $settings_xml_real)
 
   if $wallpaper_path != undef {
-    gnomish::gnome::gconf { 'set wallpaper':
+    gnomish::gnome::gconftool_2 { 'set wallpaper':
       key    => '/desktop/gnome/background/picture_filename',
       value  => $wallpaper_path,
       type   => 'string',
@@ -98,7 +98,7 @@ class gnomish::gnome (
       group  => 'root',
       mode   => '0644',
       source => $wallpaper_source,
-      before => Gnomish::Gnome::Gconf['set wallpaper'],
+      before => Gnomish::Gnome::Gconftool_2['set wallpaper'],
     }
   }
 }

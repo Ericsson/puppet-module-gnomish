@@ -1,10 +1,10 @@
 require 'spec_helper'
-describe 'gnomish::gnome::gconf' do
+describe 'gnomish::gnome::gconftool_2' do
   let(:title) { '/desktop/rspec' }
 
   describe 'with defaults for all parameters' do
     it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'value'/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(expects a value for|Must pass value to)/)
     end
   end
 
@@ -43,16 +43,22 @@ describe 'gnomish::gnome::gconf' do
         :message => 'is not an absolute path',
       },
       'string' => {
-        :name    => %w(value key),
+        :name    => %w(key),
         :valid   => ['string'],
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
+        :message => 'is not a string',
+      },
+      'stringified value' => {
+        :name    => %w(value),
+        :valid   => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
+        :invalid => [],
         :message => 'is not a string',
       },
       'regex desktop' => {
         :name    => %w(type),
         :valid   => %w(auto bool boolean int integer float string),
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
-        :message => 'gnomish::gnome::gconf::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to',
+        :message => 'gnomish::gnome::gconftool_2::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to',
       },
     }
 
