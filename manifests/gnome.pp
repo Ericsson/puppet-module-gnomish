@@ -9,8 +9,6 @@ class gnomish::gnome (
   $system_items_modify      = false,
   $system_items_path        = '/usr/share/gnome-main-menu/system-items.xbel',
   $system_items_source      = 'puppet:///modules/gnomish/gnome/SLE11-system-items.xbel.erb',
-  $wallpaper_path           = undef,
-  $wallpaper_source         = undef,
 ) {
 
   # variable preparations
@@ -31,10 +29,6 @@ class gnomish::gnome (
   # variable validations
   validate_absolute_path($system_items_path)
 
-  if $wallpaper_path != undef {
-    validate_absolute_path($wallpaper_path)
-  }
-
   validate_bool(
     $system_items_modify,
     $applications_hiera_merge,
@@ -49,13 +43,7 @@ class gnomish::gnome (
   validate_string(
     $gconf_name,
     $system_items_source,
-    $wallpaper_source,
   )
-
-  # conditional checks
-  if $wallpaper_source != undef and $wallpaper_path == undef {
-    fail('gnomish::gnome::wallpaper_path is needed but undefiend. Please define a valid path.')
-  }
 
   # functionality
   if $gconf_name != undef {
@@ -80,25 +68,4 @@ class gnomish::gnome (
 
   create_resources('gnomish::application', $applications_real)
   create_resources('gnomish::gnome::gconftool_2', $settings_xml_real)
-
-  if $wallpaper_path != undef {
-    gnomish::gnome::gconftool_2 { 'set wallpaper':
-      key    => '/desktop/gnome/background/picture_filename',
-      value  => $wallpaper_path,
-      type   => 'string',
-      config => 'defaults',
-    }
-  }
-
-  if $wallpaper_source != undef {
-    file { 'wallpaper':
-      ensure => file,
-      path   => $wallpaper_path,
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0644',
-      source => $wallpaper_source,
-      before => Gnomish::Gnome::Gconftool_2['set wallpaper'],
-    }
-  }
 }
