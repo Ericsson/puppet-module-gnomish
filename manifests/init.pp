@@ -4,6 +4,7 @@ class gnomish (
   $applications             = {},
   $applications_hiera_merge = true,
   $desktop                  = 'gnome',
+  $gconf_name               = undef,
   $packages_add             = [],
   $packages_remove          = [],
   $settings_xml             = {},
@@ -60,9 +61,8 @@ class gnomish (
     $settings_xml_hiera,
   )
 
-  validate_string(
-    $wallpaper_source,
-  )
+  if (is_string($gconf_name)       == false) { fail('gnomish::gconf_name is not a string.') }
+  if is_string($wallpaper_source) == false { fail('gnomish::wallpaper_source is not a string.') }
 
   validate_re($desktop, '^(gnome|mate)$', "gnomish::desktop must be <gnome> or <mate> and is set to ${desktop}")
 
@@ -89,6 +89,15 @@ class gnomish (
 
   $settings_xml_real = merge($settings_xml_wallpaper,  $settings_xml_hiera)
   create_resources("gnomish::${desktop}::${conftool}", $settings_xml_real)
+
+  if $gconf_name != undef {
+    file_line { 'set_gconf_name':
+      ensure => present,
+      path   => '/etc/gconf/2/path',
+      line   => "xml:readwrite:${gconf_name}",
+      match  => '^xml:readwrite:',
+    }
+  }
 
   if $wallpaper_source != undef {
     file { 'wallpaper':

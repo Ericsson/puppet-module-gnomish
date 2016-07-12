@@ -3,7 +3,6 @@
 class gnomish::mate (
   $applications             = {},
   $applications_hiera_merge = true,
-#  $gconf_name               = undef,
   $settings_xml                 = {},
   $settings_xml_hiera_merge     = true,
 #  $system_items_modify      = false,
@@ -41,19 +40,8 @@ class gnomish::mate (
   )
 
 #  validate_string(
-#    $gconf_name,
 #    $system_items_source,
 #  )
-
-  # functionality
-#  if $gconf_name != undef {
-#    file_line { 'set_gconf_name':
-#      ensure => file,
-#      path   => '/etc/gconf/2/path',
-#      line   => "xml:readwrite:${gconf_name}",
-#      match  => '^xml:readwrite:',
-#    }
-#  }
 
 #  if $system_items_modify == true {
 #    file { 'modified system items' :
