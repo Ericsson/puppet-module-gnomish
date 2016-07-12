@@ -4,6 +4,7 @@ class gnomish (
   $applications             = {},
   $applications_hiera_merge = true,
   $desktop                  = 'gnome',
+  $gconf_name               = undef,
   $packages_add             = [],
   $packages_remove          = [],
   $settings_xml             = {},
@@ -61,6 +62,7 @@ class gnomish (
   )
 
   validate_string(
+    $gconf_name,
     $wallpaper_source,
   )
 
@@ -89,6 +91,15 @@ class gnomish (
 
   $settings_xml_real = merge($settings_xml_wallpaper,  $settings_xml_hiera)
   create_resources("gnomish::${desktop}::${conftool}", $settings_xml_real)
+
+  if $gconf_name != undef {
+    file_line { 'set_gconf_name':
+      ensure => present,
+      path   => '/etc/gconf/2/path',
+      line   => "xml:readwrite:${gconf_name}",
+      match  => '^xml:readwrite:',
+    }
+  }
 
   if $wallpaper_source != undef {
     file { 'wallpaper':

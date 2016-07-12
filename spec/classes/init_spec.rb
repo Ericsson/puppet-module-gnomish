@@ -210,6 +210,19 @@ describe 'gnomish' do
     it { should_not contain_class('gnomish::gnome') }
   end
 
+  describe 'with gconf_name set to valid string <$(HOME)/.gconf-rspec>' do
+    let(:params) { { :gconf_name => '$(HOME)/.gconf-rspec' } }
+    it { should compile.with_all_deps }
+    it do
+      should contain_file_line('set_gconf_name').with({
+        'ensure' => 'present',
+        'path'   => '/etc/gconf/2/path',
+        'line'   => 'xml:readwrite:$(HOME)/.gconf-rspec',
+        'match'  => '^xml:readwrite:',
+      })
+    end
+  end
+
   describe 'with packages_add set to valid array %w(rspec testing)' do
     let(:params) { { :packages_add => %w(rspec testing) } }
 
@@ -234,6 +247,47 @@ describe 'gnomish' do
     end
   end
 
+  describe 'with wallpaper_path set to valid string </usr/share/wallpapers/rspec.png>' do
+    let(:params) { { :wallpaper_path => '/usr/share/wallpapers/rspec.png' } }
+
+    it { should have_gnomish__gnome__gconftool_2_resource_count(1) }
+
+    it do
+      should contain_gnomish__gnome__gconftool_2('set wallpaper').with({
+        'key'    => '/desktop/gnome/background/picture_filename',
+        'value'  => '/usr/share/wallpapers/rspec.png',
+      })
+    end
+  end
+
+  describe 'with wallpaper_source set to valid string </src/rspec.png>' do
+    let(:params) { { :wallpaper_source => '/src/rspec.png' } }
+
+    it 'should fail' do
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /gnomish::wallpaper_path is needed but undefiend\. Please define a valid path/)
+    end
+
+    context 'when wallpaper_path is set to valid string </dst/rspec.png>' do
+      let(:params) do
+        {
+          :wallpaper_source => '/src/rspec.png',
+          :wallpaper_path   => '/dst/rspec.png',
+        }
+      end
+      it do
+        should contain_file('wallpaper').with({
+          'ensure' => 'file',
+          'path'   => '/dst/rspec.png',
+          'owner'  => 'root',
+          'group'  => 'root',
+          'mode'   => '0644',
+          'source' => '/src/rspec.png',
+          'before' => 'Gnomish::Gnome::Gconftool_2[set wallpaper]',
+        })
+      end
+    end
+  end
+
   describe 'variable type and content validations' do
     # set needed custom facts and variables
     let(:facts) do
@@ -248,6 +302,12 @@ describe 'gnomish' do
     end
 
     validations = {
+      'absolute_path' => {
+        :name    => %w(wallpaper_path),
+        :valid   => %w(/absolute/filepath /absolute/directory/),
+        :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
+        :message => 'is not an absolute path',
+      },
       'array' => {
         :name    => %w(packages_add packages_remove),
         :valid   => [%w(array)],
@@ -272,6 +332,19 @@ describe 'gnomish' do
         :valid   => %w(gnome mate),
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
         :message => 'must be <gnome> or <mate> and is set to',
+      },
+      'string' => {
+        :name    => %w(gconf_name),
+        :valid   => ['string'],
+        :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
+        :message => 'is not a string',
+      },
+      'string wallpaper_source' => {
+        :name    => %w(wallpaper_source),
+        :params  => { :wallpaper_path => '/dst/rspec.png' },
+        :valid   => ['/src/rspec.png'],
+        :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
+        :message => 'is not a string',
       },
     }
 
