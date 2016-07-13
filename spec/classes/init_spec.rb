@@ -10,38 +10,28 @@ describe 'gnomish' do
     it { should have_gnomish__mate__mateconftool_2_resource_count(0) }
   end
 
+
   describe 'with applications set to valid hash' do
-    context 'when applications_hiera_merge set to <true>' do
-      let(:params) do
-        {
-          :applications => {
-            'from_param' => {
-              'ensure'           => 'file',
-              'entry_categories' => 'from_param',
-              'entry_exec'       => 'exec',
-              'entry_icon'       => 'icon',
-            }
-          },
-          :applications_hiera_merge => true,
+    let :applications_hash  do
+      {
+        :applications => {
+          'from_param' => {
+            'ensure'           => 'file',
+            'entry_categories' => 'from_param',
+            'entry_exec'       => 'exec',
+            'entry_icon'       => 'icon',
+          }
         }
-      end
+      }
+    end
+
+    context 'when applications_hiera_merge set to <true> (default)' do
+      let(:params) { applications_hash.merge({ :applications_hiera_merge => true }) }
       it { should have_gnomish__application_resource_count(0) }
     end
 
     context 'when applications_hiera_merge set to <false>' do
-      let(:params) do
-        {
-          :applications => {
-            'from_param' => {
-              'ensure'           => 'file',
-              'entry_categories' => 'from_param',
-              'entry_exec'       => 'exec',
-              'entry_icon'       => 'icon',
-            }
-          },
-          :applications_hiera_merge => false,
-        }
-      end
+      let(:params) { applications_hash.merge({ :applications_hiera_merge => false }) }
       it { should have_gnomish__application_resource_count(1) }
 
       it do
@@ -55,164 +45,57 @@ describe 'gnomish' do
     end
   end
 
-  describe 'with applications provided from hiera' do
-    let(:facts) do
+  describe 'with desktop set to valid string <gnome> (default)' do
+    let(:params) do
       {
-        :fqdn  => 'desktop.example.local',
-        :class => 'desktop',
+        :desktop          => 'gnome',
+        :wallpaper_path   => '/test/desktop/dst',
+        :wallpaper_source => '/test/desktop/src',
       }
     end
 
-    context 'when applications_hiera_merge set to <true>' do
-      let(:params) { { :applications_hiera_merge => true } }
-
-      it { should have_gnomish__application_resource_count(2) }
-
-      it do
-        should contain_gnomish__application('from_hiera_class').with({
-          'ensure'           => 'file',
-          'entry_categories' => 'from_hiera',
-          'entry_exec'       => 'exec',
-          'entry_icon'       => 'icon',
-        })
-      end
-
-      it do
-        should contain_gnomish__application('from_hiera_fqdn').with({
-          'ensure'           => 'file',
-          'entry_categories' => 'from_hiera',
-          'entry_exec'       => 'exec',
-          'entry_icon'       => 'icon',
-        })
-      end
-    end
-
-    context 'with data provided from hiera & applications_hiera_merge set to <false>' do
-      let(:params) { { :applications_hiera_merge => false } }
-
-      it { should have_gnomish__application_resource_count(1) }
-      it { should_not contain_gnomish__application('from_hiera__parameter') }
-
-      it do
-        should contain_gnomish__application('from_hiera_fqdn').with({
-          'ensure'           => 'file',
-          'entry_categories' => 'from_hiera',
-          'entry_exec'       => 'exec',
-          'entry_icon'       => 'icon',
-        })
-      end
-    end
-  end
-
-  describe 'with desktop set to valid string <gnome>' do
-    let(:params) { { :desktop => 'gnome' } }
-    it { should compile.with_all_deps }
     it { should contain_class('gnomish::gnome') }
-    it { should_not contain_class('gnomish::mate') }
 
-    context 'with settings_xml set to valid hash' do
-      context 'when settings_xml_hiera_merge set to <true>' do
-        let(:params) do
-          {
-            :settings_xml => {
-              'from_param' => {
-                'value'  => 'from_param',
-              }
-            },
-            :settings_xml_hiera_merge => true,
-            :desktop              => 'gnome',
-          }
-        end
-        it { should have_gnomish__gnome__gconftool_2_resource_count(0) }
-      end
-      context 'when settings_xml_hiera_merge set to <false>' do
-        let(:params) do
-          {
-            :settings_xml => {
-              'from_param' => {
-                'value'  => 'from_param',
-              }
-            },
-            :settings_xml_hiera_merge => false,
-            :desktop              => 'gnome',
-          }
-        end
-        it { should have_gnomish__gnome__gconftool_2_resource_count(1) }
-
-        it do
-          should contain_gnomish__gnome__gconftool_2('from_param').with({
-            'value' => 'from_param',
-          })
-        end
-      end
+    it do
+      should contain_gnomish__gnome__gconftool_2('set wallpaper').with({
+        'key'    => '/desktop/gnome/background/picture_filename',
+      })
     end
 
-    context 'with settings_xml provided from hiera' do
-      let(:facts) do
-        {
-          :fqdn  => 'desktop.example.local',
-          :class => 'desktop',
-        }
-      end
-
-      context 'when settings_xml_hiera_merge set to <true>' do
-        let(:params) do
-          {
-            :settings_xml_hiera_merge => true,
-            :desktop              => 'gnome',
-          }
-        end
-
-        it { should have_gnomish__gnome__gconftool_2_resource_count(2) }
-
-        it do
-          should contain_gnomish__gnome__gconftool_2('from_hiera_class').with({
-            'key'    => '/rspec_from_hiera_class',
-            'value'  => 'test',
-            'config' => 'mandatory',
-          })
-        end
-
-        it do
-          should contain_gnomish__gnome__gconftool_2('from_hiera_fqdn').with({
-            'key'    => '/rspec_from_hiera_fqdn',
-            'value'  => 'test',
-            'config' => 'mandatory',
-          })
-        end
-      end
-
-      context 'when settings_xml_hiera_merge set to <false>' do
-        let(:params) do
-          {
-            :settings_xml_hiera_merge => false,
-            :desktop              => 'gnome',
-          }
-        end
-
-        it { should have_gnomish__gnome__gconftool_2_resource_count(1) }
-
-        it do
-          should contain_gnomish__gnome__gconftool_2('from_hiera_fqdn').with({
-            'key'    => '/rspec_from_hiera_fqdn',
-            'value'  => 'test',
-            'config' => 'mandatory',
-          })
-        end
-      end
+    it do
+      should contain_file('wallpaper').with({
+        'before' => 'Gnomish::Gnome::Gconftool_2[set wallpaper]',
+      })
     end
   end
 
   describe 'with desktop set to valid string <mate>' do
-    let(:params) { { :desktop => 'mate' } }
-    it { should compile.with_all_deps }
+    let(:params) do
+      {
+        :desktop          => 'mate',
+        :wallpaper_path   => '/test/desktop/dst',
+        :wallpaper_source => '/test/desktop/src',
+      }
+    end
+
     it { should contain_class('gnomish::mate') }
-    it { should_not contain_class('gnomish::gnome') }
+
+    it do
+      should contain_gnomish__mate__mateconftool_2('set wallpaper').with({
+        'key'    => '/desktop/mate/background/picture_filename',
+      })
+    end
+
+    it do
+      should contain_file('wallpaper').with({
+        'before' => 'Gnomish::Mate::Mateconftool_2[set wallpaper]',
+      })
+    end
   end
 
   describe 'with gconf_name set to valid string <$(HOME)/.gconf-rspec>' do
     let(:params) { { :gconf_name => '$(HOME)/.gconf-rspec' } }
-    it { should compile.with_all_deps }
+
     it do
       should contain_file_line('set_gconf_name').with({
         'ensure' => 'present',
@@ -247,9 +130,36 @@ describe 'gnomish' do
     end
   end
 
+  describe 'with settings_xml set to valid hash' do
+    let :settings_xml_hash  do
+      {
+       :settings_xml => {
+          'from_param' => {
+            'value'  => 'from_param',
+          }
+        }
+      }
+    end
+
+    context 'when settings_xml_hiera_merge set to <true> (default)' do
+      let(:params) { settings_xml_hash.merge({ :settings_xml_hiera_merge => true }) }
+      it { should have_gnomish__gnome__gconftool_2_resource_count(0) }
+    end
+
+    context 'when settings_xml_hiera_merge set to <false>' do
+      let(:params) { settings_xml_hash.merge({ :settings_xml_hiera_merge => false }) }
+      it { should have_gnomish__gnome__gconftool_2_resource_count(1) }
+
+      it do
+        should contain_gnomish__gnome__gconftool_2('from_param').with({
+          'value' => 'from_param',
+        })
+      end
+    end
+  end
+
   describe 'with wallpaper_path set to valid string </usr/share/wallpapers/rspec.png>' do
     let(:params) { { :wallpaper_path => '/usr/share/wallpapers/rspec.png' } }
-
     it { should have_gnomish__gnome__gconftool_2_resource_count(1) }
 
     it do
@@ -285,6 +195,65 @@ describe 'gnomish' do
           'before' => 'Gnomish::Gnome::Gconftool_2[set wallpaper]',
         })
       end
+    end
+  end
+
+  describe 'with hiera providing data from multiple levels' do
+    let(:facts) do
+      {
+        :fqdn  => 'gnomish.example.local',
+        :class => 'gnomish',
+      }
+    end
+
+    context 'with defaults for all parameters' do
+      it { should have_gnomish__application_resource_count(4) }
+      it { should contain_gnomish__application('from_hiera_class') }
+      it { should contain_gnomish__application('from_hiera_fqdn') }
+      it { should contain_gnomish__application('from_hiera_class_gnome_specific') }
+      it { should contain_gnomish__application('from_hiera_fqdn_gnome_specific') }
+
+      it { should have_gnomish__gnome__gconftool_2_resource_count(4) }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_class') }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_fqdn') }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_class_gnome_specific') }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_fqdn_gnome_specific') }
+
+      it { should have_gnomish__mate__mateconftool_2_resource_count(0) }
+    end
+
+    context 'with applications_hiera_merge set to valid <false>' do
+      let(:params) { { :applications_hiera_merge => false } }
+
+      it { should have_gnomish__application_resource_count(3) }
+      it { should contain_gnomish__application('from_hiera_fqdn') }
+      it { should contain_gnomish__application('from_hiera_class_gnome_specific') }
+      it { should contain_gnomish__application('from_hiera_fqdn_gnome_specific') }
+
+      it { should have_gnomish__gnome__gconftool_2_resource_count(4) }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_class') }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_fqdn') }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_class_gnome_specific') }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_fqdn_gnome_specific') }
+
+      it { should have_gnomish__mate__mateconftool_2_resource_count(0) }
+    end
+
+    context 'with settings_xml_hiera_merge set to valid <false>' do
+      let(:params) { { :settings_xml_hiera_merge => false } }
+
+      it { should have_gnomish__application_resource_count(4) }
+      it { should contain_gnomish__application('from_hiera_class') }
+      it { should contain_gnomish__application('from_hiera_fqdn') }
+      it { should contain_gnomish__application('from_hiera_class_gnome_specific') }
+      it { should contain_gnomish__application('from_hiera_fqdn_gnome_specific') }
+
+      it { should have_gnomish__gnome__gconftool_2_resource_count(3) }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_fqdn') }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_class_gnome_specific') }
+      it { should contain_gnomish__gnome__gconftool_2('from_hiera_fqdn_gnome_specific') }
+
+      it { should have_gnomish__mate__mateconftool_2_resource_count(0) }
     end
   end
 

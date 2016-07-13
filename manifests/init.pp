@@ -61,7 +61,7 @@ class gnomish (
     $settings_xml_hiera,
   )
 
-  if (is_string($gconf_name)       == false) { fail('gnomish::gconf_name is not a string.') }
+  if is_string($gconf_name)       == false { fail('gnomish::gconf_name is not a string.') }
   if is_string($wallpaper_source) == false { fail('gnomish::wallpaper_source is not a string.') }
 
   validate_re($desktop, '^(gnome|mate)$', "gnomish::desktop must be <gnome> or <mate> and is set to ${desktop}")
