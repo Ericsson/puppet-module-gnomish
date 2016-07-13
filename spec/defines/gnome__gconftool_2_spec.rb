@@ -1,6 +1,11 @@
 require 'spec_helper'
 describe 'gnomish::gnome::gconftool_2' do
-  let(:title) { '/desktop/rspec' }
+  let(:title) { '/gnomish/rspec' }
+  let :mandatory_params  do
+    {
+      :value => 'value'
+    }
+  end
 
   describe 'with defaults for all parameters' do
     it 'should fail' do
@@ -10,17 +15,88 @@ describe 'gnomish::gnome::gconftool_2' do
 
   describe 'with value set to valid string <testing>' do
     let(:params) { { :value => 'testing' } }
-
     it { should compile.with_all_deps }
 
     it do
-      should contain_exec('gconftool-2 /desktop/rspec').with({
-        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type string --set \'/desktop/rspec\' \'testing\'',
-        'unless'  => 'test "$(gconftool-2 --get /desktop/rspec)" == "testing"',
+      should contain_exec('gconftool-2 /gnomish/rspec').with({
+        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type string --set \'/gnomish/rspec\' \'testing\'',
+        'unless'  => 'test "$(gconftool-2 --get /gnomish/rspec)" == "testing"',
         'path'    => '/bin:/sbin:/usr/bin:/usr/sbin',
       })
     end
   end
+
+  describe 'with config set to valid string <mandatory>' do
+    let(:params) { mandatory_params.merge({ :config => 'mandatory' }) }
+    it { should compile.with_all_deps }
+
+    it do
+      should contain_exec('gconftool-2 /gnomish/rspec').with({
+        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type string --set \'/gnomish/rspec\' \'value\'',
+        'unless'  => 'test "$(gconftool-2 --get /gnomish/rspec)" == "value"',
+        'path'    => '/bin:/sbin:/usr/bin:/usr/sbin',
+      })
+    end
+  end
+
+  describe 'with config set to valid string </etc/rspec/gconf.xml.specific>' do
+    let(:params) { mandatory_params.merge({ :config => '/etc/rspec/gconf.xml.specific' }) }
+
+    it do
+      should contain_exec('gconftool-2 /gnomish/rspec').with({
+        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/rspec/gconf.xml.specific --type string --set \'/gnomish/rspec\' \'value\'',
+        'unless'  => 'test "$(gconftool-2 --get /gnomish/rspec)" == "value"',
+      })
+    end
+  end
+
+  describe 'with key set to valid string </rspec/testing>' do
+    let(:params) { mandatory_params.merge({ :key => '/rspec/testing' }) }
+    it { should compile.with_all_deps }
+
+    it do
+      should contain_exec('gconftool-2 /rspec/testing').with({
+        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type string --set \'/rspec/testing\' \'value\'',
+        'unless'  => 'test "$(gconftool-2 --get /rspec/testing)" == "value"',
+      })
+    end
+  end
+
+  %w(bool int float string).each do |type|
+    describe "with type set to valid string <#{type}>" do
+      let(:params) { mandatory_params.merge({ :type => type }) }
+
+      it do
+        should contain_exec('gconftool-2 /gnomish/rspec').with({
+          'command' => "gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type #{type} --set \'/gnomish/rspec\' \'value\'",
+        })
+      end
+    end
+  end
+
+  auto_types = {
+    'bool'   => [true, false],
+    'int'    => [3],
+    'float'  => [2.42],
+    'string' => %w(string),
+  }
+
+  auto_types.each do |type, values|
+    values.each do |value|
+      describe "with value set to valid <#{value}> (as #{value.class})" do
+        let(:params) { { :value => value } }
+
+        it do
+          should contain_exec('gconftool-2 /gnomish/rspec').with({
+            'command' => "gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type #{type} --set \'/gnomish/rspec\' \'#{value}\'",
+          })
+        end
+      end
+    end
+  end
+
+
+
 
   describe 'variable type and content validations' do
     # set needed custom facts and variables
@@ -36,9 +112,10 @@ describe 'gnomish::gnome::gconftool_2' do
     end
 
     validations = {
+      # shortcuts defaults/mandatory will be accepted and auto converted
       'absolute_path' => {
         :name    => %w(config),
-        :valid   => %w(/absolute/filepath /absolute/directory/),
+        :valid   => %w(defaults mandatory /absolute/filepath /absolute/directory/),
         :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
         :message => 'is not an absolute path',
       },
@@ -48,7 +125,7 @@ describe 'gnomish::gnome::gconftool_2' do
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
         :message => 'is not a string',
       },
-      'stringified value' => {
+      'stringified' => {
         :name    => %w(value),
         :valid   => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
         :invalid => [],
