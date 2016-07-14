@@ -39,9 +39,7 @@ class gnomish::gnome (
     $settings_xml_real,
   )
 
-  validate_string(
-    $system_items_source,
-  )
+  if is_string($system_items_source) == false { fail('gnomish::gnome::system_items_source is not a string.') }
 
   if $system_items_modify == true {
     file { 'modified system items' :

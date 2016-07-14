@@ -292,7 +292,7 @@ describe 'gnomish' do
       'hash' => {
         :name    => %w(applications settings_xml),
         :params  => { :applications_hiera_merge => false, :settings_xml_hiera_merge => false },
-        :valid   => [], # valid hashes are to complex to block test them here. Subclasses have their own specific spec tests anyway.
+        :valid   => [], # valid hashes are to complex to block test them here.
         :invalid => ['string', 3, 2.42, %w(array), true, false, nil],
         :message => 'is not a Hash',
       },
