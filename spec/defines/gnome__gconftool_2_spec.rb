@@ -19,8 +19,8 @@ describe 'gnomish::gnome::gconftool_2' do
 
     it do
       should contain_exec('gconftool-2 /gnomish/rspec').with({
-        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type string --set \'/gnomish/rspec\' \'testing\'',
-        'unless'  => 'test "$(gconftool-2 --get /gnomish/rspec)" == "testing"',
+        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --set \'/gnomish/rspec\' --type string \'testing\'',
+        'unless'  => 'test "$(gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --get /gnomish/rspec 2>&1 )" == "testing"',
         'path'    => '/bin:/sbin:/usr/bin:/usr/sbin',
       })
     end
@@ -32,8 +32,8 @@ describe 'gnomish::gnome::gconftool_2' do
 
     it do
       should contain_exec('gconftool-2 /gnomish/rspec').with({
-        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type string --set \'/gnomish/rspec\' \'value\'',
-        'unless'  => 'test "$(gconftool-2 --get /gnomish/rspec)" == "value"',
+        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --set \'/gnomish/rspec\' --type string \'value\'',
+        'unless'  => 'test "$(gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --get /gnomish/rspec 2>&1 )" == "value"',
         'path'    => '/bin:/sbin:/usr/bin:/usr/sbin',
       })
     end
@@ -44,8 +44,8 @@ describe 'gnomish::gnome::gconftool_2' do
 
     it do
       should contain_exec('gconftool-2 /gnomish/rspec').with({
-        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/rspec/gconf.xml.specific --type string --set \'/gnomish/rspec\' \'value\'',
-        'unless'  => 'test "$(gconftool-2 --get /gnomish/rspec)" == "value"',
+        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/rspec/gconf.xml.specific --set \'/gnomish/rspec\' --type string \'value\'',
+        'unless'  => 'test "$(gconftool-2 --direct --config-source xml:readwrite:/etc/rspec/gconf.xml.specific --get /gnomish/rspec 2>&1 )" == "value"',
       })
     end
   end
@@ -56,8 +56,8 @@ describe 'gnomish::gnome::gconftool_2' do
 
     it do
       should contain_exec('gconftool-2 /rspec/testing').with({
-        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type string --set \'/rspec/testing\' \'value\'',
-        'unless'  => 'test "$(gconftool-2 --get /rspec/testing)" == "value"',
+        'command' => 'gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --set \'/rspec/testing\' --type string \'value\'',
+        'unless'  => 'test "$(gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --get /rspec/testing 2>&1 )" == "value"',
       })
     end
   end
@@ -68,7 +68,7 @@ describe 'gnomish::gnome::gconftool_2' do
 
       it do
         should contain_exec('gconftool-2 /gnomish/rspec').with({
-          'command' => "gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type #{type} --set \'/gnomish/rspec\' \'value\'",
+          'command' => "gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --set \'/gnomish/rspec\' --type #{type} \'value\'",
         })
       end
     end
@@ -88,7 +88,7 @@ describe 'gnomish::gnome::gconftool_2' do
 
         it do
           should contain_exec('gconftool-2 /gnomish/rspec').with({
-            'command' => "gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type #{type} --set \'/gnomish/rspec\' \'#{value}\'",
+            'command' => "gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --set \'/gnomish/rspec\' --type #{type} \'#{value}\'",
           })
         end
       end

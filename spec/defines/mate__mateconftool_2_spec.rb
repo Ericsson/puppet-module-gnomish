@@ -19,8 +19,8 @@ describe 'gnomish::mate::mateconftool_2' do
 
     it do
       should contain_exec('mateconftool-2 /gnomish/rspec').with({
-        'command' => 'mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type string --set \'/gnomish/rspec\' \'testing\'',
-        'unless'  => 'test "$(mateconftool-2 --get /gnomish/rspec)" == "testing"',
+        'command' => 'mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --set \'/gnomish/rspec\' --type string \'testing\'',
+        'unless'  => 'test "$(mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --get /gnomish/rspec 2>&1 )" == "testing"',
         'path'    => '/bin:/sbin:/usr/bin:/usr/sbin',
       })
     end
@@ -32,8 +32,8 @@ describe 'gnomish::mate::mateconftool_2' do
 
     it do
       should contain_exec('mateconftool-2 /gnomish/rspec').with({
-        'command' => 'mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type string --set \'/gnomish/rspec\' \'value\'',
-        'unless'  => 'test "$(mateconftool-2 --get /gnomish/rspec)" == "value"',
+        'command' => 'mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --set \'/gnomish/rspec\' --type string \'value\'',
+        'unless'  => 'test "$(mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --get /gnomish/rspec 2>&1 )" == "value"',
         'path'    => '/bin:/sbin:/usr/bin:/usr/sbin',
       })
     end
@@ -44,8 +44,8 @@ describe 'gnomish::mate::mateconftool_2' do
 
     it do
       should contain_exec('mateconftool-2 /gnomish/rspec').with({
-        'command' => 'mateconftool-2 --direct --config-source xml:readwrite:/etc/rspec/gconf.xml.specific --type string --set \'/gnomish/rspec\' \'value\'',
-        'unless'  => 'test "$(mateconftool-2 --get /gnomish/rspec)" == "value"',
+        'command' => 'mateconftool-2 --direct --config-source xml:readwrite:/etc/rspec/gconf.xml.specific --set \'/gnomish/rspec\' --type string \'value\'',
+        'unless'  => 'test "$(mateconftool-2 --direct --config-source xml:readwrite:/etc/rspec/gconf.xml.specific --get /gnomish/rspec 2>&1 )" == "value"',
       })
     end
   end
@@ -56,8 +56,8 @@ describe 'gnomish::mate::mateconftool_2' do
 
     it do
       should contain_exec('mateconftool-2 /rspec/testing').with({
-        'command' => 'mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type string --set \'/rspec/testing\' \'value\'',
-        'unless'  => 'test "$(mateconftool-2 --get /rspec/testing)" == "value"',
+        'command' => 'mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --set \'/rspec/testing\' --type string \'value\'',
+        'unless'  => 'test "$(mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --get /rspec/testing 2>&1 )" == "value"',
       })
     end
   end
@@ -68,7 +68,7 @@ describe 'gnomish::mate::mateconftool_2' do
 
       it do
         should contain_exec('mateconftool-2 /gnomish/rspec').with({
-          'command' => "mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type #{type} --set \'/gnomish/rspec\' \'value\'",
+          'command' => "mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --set \'/gnomish/rspec\' --type #{type} \'value\'",
         })
       end
     end
@@ -88,7 +88,7 @@ describe 'gnomish::mate::mateconftool_2' do
 
         it do
           should contain_exec('mateconftool-2 /gnomish/rspec').with({
-            'command' => "mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --type #{type} --set \'/gnomish/rspec\' \'#{value}\'",
+            'command' => "mateconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.defaults --set \'/gnomish/rspec\' --type #{type} \'#{value}\'",
           })
         end
       end
