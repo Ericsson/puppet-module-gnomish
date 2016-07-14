@@ -29,7 +29,9 @@ define gnomish::mate::mateconftool_2 (
   # variable validation
   validate_string($value_string)
   validate_absolute_path($config_real)
-  validate_string($key)
+  if is_string($key) == false {
+    fail('gnomish::mate::mateconftool_2::key is not a string.')
+  }
   validate_re($type_real, '^(bool|int|float|string)', "gnomish::mate::mateconftool_2::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to ${type_real}")
 
   # functionality
