@@ -8,9 +8,8 @@ describe 'gnomish::mate' do
     it { should have_gnomish__mate__mateconftool_2_resource_count(0) }
   end
 
-
   describe 'with applications set to valid hash' do
-    let :applications_hash  do
+    let :applications_hash do
       {
         :applications => {
           'from_param' => {
@@ -44,11 +43,11 @@ describe 'gnomish::mate' do
   end
 
   describe 'with settings_xml set to valid hash' do
-    let :settings_xml_hash  do
+    let :settings_xml_hash do
       {
        :settings_xml => {
           'from_param' => {
-            'value'  => 'from_param',
+            'value' => 'from_param',
           }
         }
       }
@@ -103,7 +102,7 @@ describe 'gnomish::mate' do
       it { should contain_gnomish__mate__mateconftool_2('from_hiera_fqdn_mate_specific') }
     end
   end
-#=begin
+
   describe 'variable type and content validations' do
     # set needed custom facts and variables
     let(:facts) do
@@ -154,5 +153,4 @@ describe 'gnomish::mate' do
       end # var[:name].each
     end # validations.sort.each
   end # describe 'variable type and content validations'
-#=end
 end

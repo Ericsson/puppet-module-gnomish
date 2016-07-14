@@ -1,7 +1,7 @@
 require 'spec_helper'
 describe 'gnomish::application' do
   let(:title) { 'rspec-title' }
-  let :minimum_params  do
+  let :minimum_params do
     {
       :entry_categories => 'category',
       :entry_exec       => 'exec',
@@ -127,7 +127,7 @@ describe 'gnomish::application' do
         |Type=Application
       END
 
-      it { should contain_file('desktop_app_rspec-title').with_content( content_entry_lines ) }
+      it { should contain_file('desktop_app_rspec-title').with_content(content_entry_lines) }
     end
 
     %w(Name Icon Exec Categories Type Terminal).each do |setting|

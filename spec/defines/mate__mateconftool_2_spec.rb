@@ -1,7 +1,7 @@
 require 'spec_helper'
 describe 'gnomish::mate::mateconftool_2' do
   let(:title) { '/gnomish/rspec' }
-  let :mandatory_params  do
+  let :mandatory_params do
     {
       :value => 'value'
     }
@@ -94,9 +94,6 @@ describe 'gnomish::mate::mateconftool_2' do
       end
     end
   end
-
-
-
 
   describe 'variable type and content validations' do
     # set needed custom facts and variables

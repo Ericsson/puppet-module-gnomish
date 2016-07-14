@@ -10,9 +10,8 @@ describe 'gnomish' do
     it { should have_gnomish__mate__mateconftool_2_resource_count(0) }
   end
 
-
   describe 'with applications set to valid hash' do
-    let :applications_hash  do
+    let :applications_hash do
       {
         :applications => {
           'from_param' => {
@@ -131,11 +130,11 @@ describe 'gnomish' do
   end
 
   describe 'with settings_xml set to valid hash' do
-    let :settings_xml_hash  do
+    let :settings_xml_hash do
       {
        :settings_xml => {
           'from_param' => {
-            'value'  => 'from_param',
+            'value' => 'from_param',
           }
         }
       }
