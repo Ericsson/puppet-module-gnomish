@@ -1,4 +1,7 @@
 define gnomish::application (
+  # desktop file resource attributes:
+  $ensure           = 'file',
+  $path             = "/usr/share/applications/${name}.desktop",
   # desktop file metadata:
   $entry_categories = undef,
   $entry_exec       = undef,
@@ -7,9 +10,6 @@ define gnomish::application (
   $entry_name       = $name,
   $entry_terminal   = false,
   $entry_type       = 'Application',
-  # desktop file resource attributes:
-  $ensure           = 'file',
-  $path             = "/usr/share/applications/${name}.desktop",
 ) {
 
   # <Variable validation>
@@ -21,27 +21,33 @@ define gnomish::application (
     validate_array($entry_lines)
     validate_bool($entry_terminal)
 
+    if is_string($entry_categories) == false { fail('gnomish::application::entry_categories is not a string.') }
+    if is_string($entry_exec)       == false { fail('gnomish::application::entry_exec is not a string.') }
+    if is_string($entry_icon)       == false { fail('gnomish::application::entry_icon is not a string.') }
+    if is_string($entry_name)       == false { fail('gnomish::application::entry_name is not a string.') }
+    if is_string($entry_type)       == false { fail('gnomish::application::entry_type is not a string.') }
+
     if $entry_categories == undef or $entry_categories == '' {
-      fail('gnomish::application::entry_categories must not be empty when gnomish::application::ensure is set to <file>.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
     }
     if $entry_exec == undef or $entry_exec == '' {
-      fail('gnomish::application::entry_exec must not be empty when gnomish::application::ensure is set to <file>.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
     }
     if $entry_icon == undef or $entry_icon == '' {
-      fail('gnomish::application::entry_icon must not be empty when gnomish::application::ensure is set to <file>.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
     }
     if $entry_name == undef or $entry_name == '' {
-      fail('gnomish::application::entry_name must not be empty when gnomish::application::ensure is set to <file>.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
     }
     if $entry_type == undef or $entry_type == '' {
-      fail('gnomish::application::entry_type must not be empty when gnomish::application::ensure is set to <file>.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
     }
   }
 
   # <functionality>
   # ensure that no basic settings sneaked in with $entry_lines to avoid duplicates
   if size($entry_lines) != size(reject($entry_lines, '^(?i:Name|Icon|Exec|Categories|Type|Terminal)=.*')) {
-    fail('gnomish::application::entry_lines does contain one of the basic settings. Please use the specific $entry_* parameters instead.')
+    fail('gnomish::application::entry_lines does contain one of the basic settings. Please use the specific $entry_* parameter instead.')
   }
 
   if $ensure == 'file' {
