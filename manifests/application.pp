@@ -7,7 +7,7 @@ define gnomish::application (
   $entry_exec       = undef,
   $entry_icon       = undef,
   $entry_lines      = [],
-  $entry_name       = $name,
+  $entry_name       = $title,
   $entry_terminal   = false,
   $entry_type       = 'Application',
 ) {
@@ -64,7 +64,7 @@ define gnomish::application (
     $entry_lines_real = []
   }
 
-  file { "desktop_app_${name}" :
+  file { "desktop_app_${title}" :
     ensure  => $ensure,
     path    => $path,
     owner   => 'root',

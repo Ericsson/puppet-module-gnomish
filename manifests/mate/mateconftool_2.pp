@@ -1,7 +1,7 @@
 define gnomish::mate::mateconftool_2 (
   $value,
   $config = 'defaults',
-  $key    = $name,
+  $key    = $title,
   $type   = 'auto',
 ) {
 
