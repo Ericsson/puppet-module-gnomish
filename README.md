@@ -4,18 +4,18 @@
 
 1. [Module Description](#module-description)
 2. [Compatibility](#compatibility)
-3. [Classes Descriptions](#classes-descriptions)
+3. [Class Descriptions](#class-descriptions)
     * [gnomish](#class-gnomish)
     * [gnomish::gnome](#class-gnomishgnome)
     * [gnomish::mate](#class-gnomishmate)
-4. [Defines Descriptions](#defines-descriptions)
+4. [Define Descriptions](#define-descriptions)
     * [gnomish::application](#defined-type-gnomishapplication)
-    * [gnomish::gconftool_2](#defined-type-gnomishgconftool_2)
-    * [gnomish::mateconftool_2](#defined-type-gnomishmateconftool_2)
+    * [gnomish::gnome::gconftool_2](#defined-type-gnomishgnomegconftool_2)
+    * [gnomish::mate::mateconftool_2](#defined-type-gnomishmatemateconftool_2)
 
 # Module description
 
-Manage Gnome & Mate Desktop menu icons and settings.
+Manage Gnome & Mate Desktop application icons and settings.
 
 With this module you can create, modify and remove applications in the desktop menus. You can set system settings, deploy and
 set a wallpaper and manage packages. You are able to decide if icons and settings are applied to Gnome or Mate only, or to both
@@ -28,6 +28,17 @@ If you want to rollout an application icon to both desktops, use `$gnomish::appl
 
 The same is possible with system settings. Use `$gnomish::settings_xml` for both desktops or `$gnomish::gnome::settings_xml` and
 `$gnomish::mate::settings_xml` for the given desktop.
+
+| parameter / desktop          | Gnome | Mate  |
+| :---                         | :---: | :---: |
+| gnomish::applications        | X     | X     |
+| gnomish::settings_xml        | X     | X     |
+| gnomish::gnome::applications | X     |       |
+| gnomish::gnome::settings_xml | X     |       |
+| gnomish::mate::applications  |       | X     |
+| gnomish::mate::settings_xml  |       | X     |
+
+
 
 # Compatibility
 
@@ -42,12 +53,12 @@ and Puppet v4 (with strict variables) using Ruby versions 1.8.7 (Puppet v3 only)
 [![Build Status](https://travis-ci.org/Phil-Friderici/puppet-module-gnomish.png?branch=master)](https://travis-ci.org/Phil-Friderici/puppet-module-gnomish)
 
 
-# Classes Descriptions
+# Class Descriptions
 ## Class `gnomish`
 
 ### Description
 
-The `gnomish` class is used to configure system icons and settings that are valid for both desktops.
+The `gnomish` class is used to configure application icons and settings that are valid for both desktops.
 Besides that, you can also manage wallpaper, packages and which file to be used to save user settings.
 
 ### Parameters
@@ -168,7 +179,7 @@ gnomish::wallpaper_source: 'puppet:///files/shared/wallpaper.png'
 
 ### Description
 
-The `gnomish::gnome` class is used to configure system icons and settings that are valid for Mate desktops only. Additional
+The `gnomish::gnome` class is used to configure application icons and settings that are valid for Mate desktops only. Additional
 you can manage the system items menu file.
 
 ### Parameters
@@ -185,12 +196,21 @@ on at the [application defined type](#defined-type-gnomishapplication).
 ##### Example:
 ```yaml
 gnomish::gnome::applications:
-  'set wallpaper':
-    key:   '/desktop/gnome/background/picture_filename'
-    value: 'wallpaper.png'
-  'authconfig':
-    ensure 'absent'
+  'mc':
+    ensure:         'file'
+    entry_category: 'System;FileManager;'
+    entry_exec:     'mc'
+    entry_icon:     'mc'
+    entry_name:     'Midnight Commander'
+    entry_terminal: false
+
+gnomish::gnome::applications:
+  'gnome-network-properties':
+    ensure: 'absent'
 ```
+*The above will add a application icon for Midnight Commander in the file /usr/share/applications/mc.desktop and remove the icon
+for gnome-network-properties.*
+
 ---
 #### applications_hiera_merge (boolean / optional)
 If set to *true* hiera_merge will be used to collect and concatenate applications settings from all applicable hiera levels. If set to
@@ -253,10 +273,10 @@ Specify the source of the file to be copied to `$system_items_path`. Takes all v
 
 ### Description
 
-The `gnomish::mate` class is used to configure system icons and settings that are valid for Mate desktops only.
+The `gnomish::mate` class is used to configure application icons and settings that are valid for Mate desktops only.
+
 
 ### Parameters
-
 ---
 #### applications (hash / optional)
 Specify applications icons that will be passed to the gnomish::applications defined type. For a full description, please read
@@ -269,12 +289,21 @@ on at the [application defined type](#defined-type-gnomishapplication).
 ##### Example:
 ```yaml
 gnomish::mate::applications:
-  'set wallpaper':
-    key:   '/desktop/gnome/background/picture_filename'
-    value: 'wallpaper.png'
-  'authconfig':
-    ensure 'absent'
+  'mc':
+    ensure:         'file'
+    entry_category: 'System;FileManager;'
+    entry_exec:     'mc'
+    entry_icon:     'mc'
+    entry_name:     'Midnight Commander'
+    entry_terminal: false
+
+gnomish::mate::applications:
+  'mate-network-properties':
+    ensure: 'absent'
 ```
+*The above will add a application icon for Midnight Commander in the file /usr/share/applications/mc.desktop and remove the icon
+for mate-network-properties.*
+
 ---
 #### applications_hiera_merge (boolean / optional)
 If set to *true* hiera_merge will be used to collect and concatenate applications settings from all applicable hiera levels. If set to
@@ -311,23 +340,23 @@ If set to *true* hiera_merge will be used to collect and concatenate desktop set
 - Default: ***true***
 
 ---
-# Defines Descriptions
+# Define Descriptions
 ## Defined type `gnomish::application`
 
 ### Description
 
-The `gnomish::application` definition is used to manage system icons on both desktops, Gnome and Mate.
+The `gnomish::application` definition is used to manage application icons on both desktops, Gnome and Mate.
 
-The minimum set of entries for system icons (Name, Icon, Exec, Categories, Type and Terminal) have to be set with the corresponding
+The minimum set of entries for application icons (Name, Icon, Exec, Categories, Type and Terminal) have to be set with the corresponding
 parameters. All others entries can be managed as an array of free text lines via the `$entry_lines` parameter. The module will ensure
 that there are no duplicate entries and fail if found one.
 
 Instead of calling this define directly, it is recommended to specify `$gnomish::applications`, `$gnomish::gnome::applications` or
 `$gnomish::mate::applications` from hiera as a hash of group resources. create_resources will create resources out of your hash.
 
-##### Example for Gnome only applications:
+##### Example for hashed application resources in hiera:
 ```yaml
-gnomish::gnome::application:
+gnomish::applications:
   'mc':
     ensure:         'file'
     entry_category: 'System;FileManager;'
@@ -335,16 +364,23 @@ gnomish::gnome::application:
     entry_icon:     'mc'
     entry_name:     'Midnight Commander'
     entry_terminal: false
-  'authconfig':
+
+gnomish::gnome::applications:
+  'gnome-network-properties':
+    ensure: 'absent'
+
+gnomish::mate::applications:
+  'mate-network-properties':
     ensure: 'absent'
 ```
-*The above will add/manage a system icon in the file /usr/share/applications/mc.desktop for Midnight Commander and removes the
-system icon which is hold in the file /usr/share/applications/authconfig.desktop.*
+*The above will add a application icon for Midnight Commander in the file /usr/share/applications/mc.desktop on both desktops. Only on
+Gnome it will remove the icon for gnome-network-properties and only on Mate the equivalent called mate-network-properties.*
+
 ### Parameters
 
 ---
 #### ensure (string / optional)
-This setting can be used to add or remove system icons. Valid values are *file* and *absent*. Use the default of *file* to
+This setting can be used to add or remove application icons. Valid values are *file* and *absent*. Use the default of *file* to
 add/manage them or set it to *absent* to remove them. If set to *absent* `$entry_categories`, `$entry_exec` and `$entry_icon` become
 and unused and optional.
 
@@ -352,14 +388,14 @@ and unused and optional.
 
 ---
 #### path (string / mandatory)
-Specify an absolute path to the desktop file containing the system icon. If not explicitly set, '/usr/share/applications/' plus
+Specify an absolute path to the desktop file containing the application icon. If not explicitly set, '/usr/share/applications/' plus
 the resource title you have chosen while calling the defined type plus '.desktop' will be used.
 
 - Default: ***"/usr/share/applications/${title}.desktop"***
 
 ---
 #### entry_categories (string / mandatory)
-Specify the system icons Categories entry.
+Specify the application icons Categories entry.
 
 **Hint**: becomes optional and unused when `$ensure` is set to *absent*.
 
@@ -367,7 +403,7 @@ Specify the system icons Categories entry.
 
 ---
 #### entry_exec (string / mandatory)
-Specify the system icons Exec entry.
+Specify the application icons Exec entry.
 
 **Hint**: becomes optional and unused when `$ensure` is set to *absent*.
 
@@ -375,7 +411,7 @@ Specify the system icons Exec entry.
 
 ---
 #### entry_icon (string / mandatory)
-Specify the system icons Icon entry.
+Specify the application icons Icon entry.
 
 **Hint**: becomes optional and unused when `$ensure` is set to *absent*.
 
@@ -390,45 +426,54 @@ the defined type will fail to avoid double entries to appear.
 
 ---
 #### entry_name (string / optional)
-Specify the system icons Name entry. If not explicitly set, the resource title you have chosen while calling the defined type
+Specify the application icons Name entry. If not explicitly set, the resource title you have chosen while calling the defined type
 will be used.
 
 - Default: ***$title***
 
 ---
 #### entry_terminal (boolean / optional)
-Specify the system icons Terminal entry. Valid values are *false* and *true*.
+Specify the application icons Terminal entry. Valid values are *false* and *true*.
 
 - Default: ***false***
 
 ---
 #### entry_type (string / optional)
-Specify the system icons Type entry.
+Specify the application icons Type entry.
 
 - Default: ***'Application'***
 
 ---
-## Defined type `gnomish::gconftool_2`
+## Defined type `gnomish::gnome::gconftool_2`
+## Defined type `gnomish::mate::mateconftool_2`
 
 ### Description
+Both defined types are used to configure Gnome or Mate system settings utilizing gconftool-2 or mateconftool-2. Up to now they
+have the same functionality and share the parameters names.
 
-The `gnomish::gnome::gconftool_2` definition is used to configure Gnome system settings utilizing gconftool-2.
+Instead of calling these defines directly, it is recommended to specify `$gnomish::settings_xml`, `$gnomish::gnome::settings_xml`
+or `$gnomish::mate::settings_xml` from hiera as a hash of group resources. create_resources will create resources out of your hash.
 
-Instead of calling this define directly, it is recommended to specify `$gnomish::settings_xml` or `$gnomish::gnome::settings_xml`
-from hiera as a hash of group resources. create_resources will create resources out of your hash.
-
-##### Example for Gnome only settings:
+##### Example for hashed settings_xml resources in hiera:
 ```yaml
-gnomish::gnome::settings_xml:
+gnomish::settings_xml:
   '/desktop/gnome/background/picture_filename':
     value:  'wallpaper.png'
-  'set screensaver to blank':
-    key:    '/apps/gnome-screensaver/mode'
-    value:  'blank-only'
+
+gnomish::gnome::settings_xml:
+  'set GTK theme':
+    key:    '/desktop/mate/interface/gtk_theme'
+    value:  'Theme'
     config: 'mandatory'
-  }
-}
+
+gnomish::mate::settings_xml:
+  'set GTK theme':
+    key:    '/desktop/gnome/interface/gtk_theme'
+    value:  'Theme'
+    config: 'mandatory'
 ```
+*The above will set a wallpaper for both desktops and change the GTK theme with the respectively key for the different desktops.*
+
 ### Parameters
 
 ---
@@ -455,58 +500,6 @@ defined type. See the [example](#example-for-gnome-only-settings) above for an e
 ---
 #### type (string / optional)
 The default of *auto* will analyze and use the data type you have used when specifying `$value`. You can override this by setting type
-to one of the other valid values of *bool*, *int*, *float* or *string*.
-
-- Default: ***'auto'***
-
----
-## Defined type `gnomish::mateconftool_2`
-
-### Description
-
-The `gnomish::mate::mateconftool_2` definition is used to configure Gnome system settings utilizing mateconftool-2.
-
-Instead of calling this define directly, it is recommended to specify `$gnomish::settings_xml` or `$gnomish::mate::settings_xml`
-from hiera as a hash of group resources. create_resources will create resources out of your hash.
-
-##### Example for Mate only settings:
-```yaml
-gnomish::mate::settings_xml:
-  '/desktop/mate/background/picture_filename':
-    value:  'wallpaper.png'
-  'set screensaver to blank':
-    key:    '/apps/gnome-screensaver/mode'
-    value:  'blank-only'
-    config: 'mandatory'
-  }
-}
-```
-### Parameters
-
----
-#### value (string / mandatory)
-Used to pass the content of the setting you want to change.
-
-- Default: ***undef***
-
----
-#### config (string / optional)
-You can specify which configuration source should get managed. For convenient usage, it allows to use *defaults* and *mandatory* as
-acronyms for /etc/gconf/gconf.xml.defaults and /etc/gconf/gconf.xml.mandatory. If you want to specify another configuration source,
-please specify the complete absolute path for it.
-
-- Default: ***'defaults'***
-
----
-#### key (string / optional)
-To specify which key you want to manage. If not explicitly set, it will use the resource title you have chosen while calling the
-defined type. See the [example](#example-for-mate-only-settings) above for an example of both ways to pass the key name.
-
-- Default: ***$title***
-
----
-#### type (string / optional)
-The default of *auto* will analyze and use the data type you have used when specifying the `$value`. You can override this by setting type
 to one of the other valid values of *bool*, *int*, *float* or *string*.
 
 - Default: ***'auto'***
