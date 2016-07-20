@@ -13,6 +13,7 @@
     * [gnomish::gnome::gconftool_2](#defined-type-gnomishgnomegconftool_2)
     * [gnomish::mate::mateconftool_2](#defined-type-gnomishmatemateconftool_2)
 
+
 # Module description
 
 Manage Gnome & Mate Desktop application icons and settings.
