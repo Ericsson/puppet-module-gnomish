@@ -1,12 +1,11 @@
 require 'spec_helper'
 describe 'gnomish::application' do
   mandatory_params = {
-    :entry_categories => 'category',
-    :entry_exec       => 'exec',
-    :entry_icon       => 'icon',
+    entry_categories: 'category',
+    entry_exec:       'exec',
+    entry_icon:       'icon',
   }
   let(:title) { 'rspec-title' }
-  let(:facts) { mandatory_global_facts }
   let(:params) { mandatory_params }
   let(:pre_condition) do
     "exec { 'update-desktop-database':
@@ -18,77 +17,95 @@ describe 'gnomish::application' do
 
   describe 'with defaults for all parameters' do
     let(:params) { {} }
-    it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)/)
+
+    it 'fail' do
+      expect { is_expected.to contain_class(:subject) }.to raise_error(
+        Puppet::Error, %r{(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)}
+      )
     end
   end
 
   describe 'with ensure set to valid string <absent>' do
-    let(:params) { { :ensure => 'absent' } }
+    let(:params) { { ensure: 'absent' } }
 
     it do
-      should contain_file('desktop_app_rspec-title').with({
-        'ensure'  => 'absent',
-        'path'    => '/usr/share/applications/rspec-title.desktop',
-        'notify' => 'Exec[update-desktop-database]',
-      })
+      is_expected.to contain_file('desktop_app_rspec-title').with(
+        {
+          'ensure' => 'absent',
+          'path'   => '/usr/share/applications/rspec-title.desktop',
+          'notify' => 'Exec[update-desktop-database]',
+        },
+      )
     end
   end
 
   describe 'with path set to valid string </rspec/testing.desktop>' do
-    let(:params) { { :path => '/rspec/testing.desktop' } }
+    let(:params) { { path: '/rspec/testing.desktop' } }
 
-    it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)/)
+    it 'fail' do
+      expect { is_expected.to contain_class(:subject) }.to raise_error(
+        Puppet::Error, %r{(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)}
+      )
     end
   end
 
   describe 'with path set to valid string </rspec/testing.desktop> and ensure set to <absent>' do
     let(:params) do
-      mandatory_params.merge({
-        :path   => '/rspec/testing.desktop',
-        :ensure => 'absent',
-      })
+      mandatory_params.merge(
+        {
+          path:   '/rspec/testing.desktop',
+          ensure: 'absent',
+        },
+      )
     end
 
     it do
-      should contain_file('desktop_app_rspec-title').with({
-        'ensure' => 'absent',
-        'path'   => '/rspec/testing.desktop',
-        'notify' => 'Exec[update-desktop-database]',
-      })
+      is_expected.to contain_file('desktop_app_rspec-title').with(
+        {
+          'ensure' => 'absent',
+          'path'   => '/rspec/testing.desktop',
+          'notify' => 'Exec[update-desktop-database]',
+        },
+      )
     end
   end
 
-  %w(categories exec icon name type).each do |param|
+  ['categories', 'exec', 'icon', 'name', 'type'].each do |param|
     describe "with entry_#{param} set to valid string <example>" do
-      let(:params) { { :"entry_#{param}" => 'example' } }
+      let(:params) { { "entry_#{param}": 'example' } }
 
-      it 'should fail' do
-        expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)/)
+      it 'fail' do
+        expect { is_expected.to contain_class(:subject) }.to raise_error(
+          Puppet::Error, %r{(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)}
+        )
       end
     end
   end
 
   context 'with entry_terminal set to valid boolean <true>' do
-    let(:params) { { :entry_terminal => true } }
+    let(:params) { { entry_terminal: true } }
 
-    it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)/)
+    it 'fail' do
+      expect { is_expected.to contain_class(:subject) }.to raise_error(
+        Puppet::Error, %r{(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)}
+      )
     end
   end
 
   describe 'with entry_lines set to valid array %w(Comment=rspec)' do
-    let(:params) { { :entry_lines => %w(Comment=rspec) } }
-    it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)/)
+    let(:params) { { entry_lines: ['Comment=rspec'] } }
+
+    it 'fail' do
+      expect { is_expected.to contain_class(:subject) }.to raise_error(
+        Puppet::Error, %r{(when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values)}
+      )
     end
   end
 
   describe 'with minimum parameters set when ensure is set to <file>' do
     let(:params) { mandatory_params }
 
-    content_minimum = <<-END.gsub(/^\s+\|/, '')
+    content_minimum = <<-END.gsub(%r{^\s+\|}, '')
       |[Desktop Entry]
       |Categories=category
       |Exec=exec
@@ -99,46 +116,49 @@ describe 'gnomish::application' do
     END
 
     it do
-      should contain_file('desktop_app_rspec-title').with({
-        'ensure' => 'file',
-        'path'   => '/usr/share/applications/rspec-title.desktop',
-        'owner'   => 'root',
-        'group'   => 'root',
-        'mode'    => '0644',
-        'notify'  => 'Exec[update-desktop-database]',
-        'content' => content_minimum,
-      })
+      is_expected.to contain_file('desktop_app_rspec-title').with(
+        {
+          'ensure' => 'file',
+          'path'   => '/usr/share/applications/rspec-title.desktop',
+          'owner'   => 'root',
+          'group'   => 'root',
+          'mode'    => '0644',
+          'notify'  => 'Exec[update-desktop-database]',
+          'content' => content_minimum,
+        },
+      )
     end
 
-    %w(categories exec icon name type).each do |param|
+    ['categories', 'exec', 'icon', 'name', 'type'].each do |param|
       context "when entry_#{param} is set to valid string <example>" do
-        let(:params) { mandatory_params.merge({ :"entry_#{param}" => 'example' }) }
+        let(:params) { mandatory_params.merge({ "entry_#{param}": 'example' }) }
 
-        it { should contain_file('desktop_app_rspec-title').with_content(/^#{param.capitalize}=example$/) }
+        it { is_expected.to contain_file('desktop_app_rspec-title').with_content(%r{^#{param.capitalize}=example$}) }
       end
     end
 
     context 'when entry_terminal is set to valid boolean <true>' do
-      let(:params) { mandatory_params.merge({ :entry_terminal => true }) }
+      let(:params) { mandatory_params.merge({ entry_terminal: true }) }
 
-      it { should contain_file('desktop_app_rspec-title').with_content(/^Terminal=true$/) }
+      it { is_expected.to contain_file('desktop_app_rspec-title').with_content(%r{^Terminal=true$}) }
     end
 
     context 'when entry_mimetype is set to valid string <application/spec.test>' do
-      let(:params) { mandatory_params.merge({ :entry_mimetype => 'application/spec.test' }) }
+      let(:params) { mandatory_params.merge({ entry_mimetype: 'application/spec.test' }) }
 
-      it { should contain_file('desktop_app_rspec-title').with_content(%r{^MimeType=application\/spec.test$}) }
+      it { is_expected.to contain_file('desktop_app_rspec-title').with_content(%r{^MimeType=application\/spec.test$}) }
     end
 
     context 'when entry_mimetype is set to valid array [ <application/spec.test>, <application/rspec.test> ]' do
-      let(:params) { mandatory_params.merge({ :entry_mimetype => ['application/spec.test', 'application/rspec.test'] }) }
+      let(:params) { mandatory_params.merge({ entry_mimetype: ['application/spec.test', 'application/rspec.test'] }) }
 
-      it { should contain_file('desktop_app_rspec-title').with_content(%r{^MimeType=application\/spec.test;application\/rspec.test$}) }
+      it { is_expected.to contain_file('desktop_app_rspec-title').with_content(%r{^MimeType=application\/spec.test;application\/rspec.test$}) }
     end
 
     context 'when entry_lines is set to valid array %w(Comment=example1 Encoding=UTF-8)' do
-      let(:params) { mandatory_params.merge({ :entry_lines => %w(Comment=comment Test=test) }) }
-      content_entry_lines = <<-END.gsub(/^\s+\|/, '')
+      let(:params) { mandatory_params.merge({ entry_lines: ['Comment=comment', 'Test=test'] }) }
+
+      content_entry_lines = <<-END.gsub(%r{^\s+\|}, '')
         |[Desktop Entry]
         |Categories=category
         |Comment=comment
@@ -150,15 +170,17 @@ describe 'gnomish::application' do
         |Type=Application
       END
 
-      it { should contain_file('desktop_app_rspec-title').with_content(content_entry_lines) }
+      it { is_expected.to contain_file('desktop_app_rspec-title').with_content(content_entry_lines) }
     end
 
-    %w(Name Icon Exec Categories Type Terminal).each do |setting|
+    ['Name', 'Icon', 'Exec', 'Categories', 'Type', 'Terminal'].each do |setting|
       context "when entry_lines also contains the basic setting #{setting}" do
-        let(:params) { mandatory_params.merge({ :entry_lines => ["#{setting}=something"] }) }
+        let(:params) { mandatory_params.merge({ entry_lines: ["#{setting}=something"] }) }
 
-        it 'should fail' do
-          expect { should contain_class(subject) }.to raise_error(Puppet::Error, /gnomish::application::entry_lines does contain one of the basic settings\. Please use the specific \$entry_\* parameter instead/)
+        it 'fail' do
+          expect { is_expected.to contain_class(:subject) }.to raise_error(
+            Puppet::Error, %r{gnomish::application::entry_lines does contain one of the basic settings\. Please use the specific \$entry_\* parameter instead}
+          )
         end
       end
     end
@@ -167,40 +189,40 @@ describe 'gnomish::application' do
   describe 'variable type and content validations' do
     validations = {
       'absolute_path' => {
-        :name    => %w(path),
-        :valid   => %w(/absolute/filepath /absolute/directory/),
-        :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
-        :message => 'is not an absolute path',
+        name:    ['path'],
+        valid:   ['/absolute/filepath', '/absolute/directory/'],
+        invalid: ['string', ['array'], { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
+        message: 'is not an absolute path',
       },
       'array' => {
-        :name    => %w(entry_lines),
-        :valid   => [%w(array)],
-        :invalid => ['string', { 'ha' => 'sh' }, 3, 2.42, true, false],
-        :message => 'is not an Array',
+        name:    ['entry_lines'],
+        valid:   [['array']],
+        invalid: ['string', { 'ha' => 'sh' }, 3, 2.42, true, false],
+        message: 'is not an Array',
       },
       'boolean' => {
-        :name    => %w(entry_terminal),
-        :valid   => [true, false],
-        :invalid => ['true', 'false', 'string', %w(array), { 'ha' => 'sh' }, 3, 2.42, nil],
-        :message => '(is not a boolean|Unknown type of boolean given)',
+        name:    ['entry_terminal'],
+        valid:   [true, false],
+        invalid: ['true', 'false', 'string', ['array'], { 'ha' => 'sh' }, 3, 2.42, nil],
+        message: '(is not a boolean|Unknown type of boolean given)',
       },
       'string / array' => {
-        :name    => %w(entry_mimetype),
-        :valid   => ['string', %w(array)],
-        :invalid => [{ 'ha' => 'sh' }, 3, 2.42, true, false],
-        :message => 'is not a string nor an array',
+        name:    ['entry_mimetype'],
+        valid:   ['string', ['array']],
+        invalid: [{ 'ha' => 'sh' }, 3, 2.42, true, false],
+        message: 'is not a string nor an array',
       },
       'string' => {
-        :name    => %w(entry_categories entry_exec entry_icon entry_name entry_type),
-        :valid   => ['string'],
-        :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
-        :message => 'is not a string',
+        name:    ['entry_categories', 'entry_exec', 'entry_icon', 'entry_name', 'entry_type'],
+        valid:   ['string'],
+        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
+        message: 'is not a string',
       },
       'regex ensure' => {
-        :name    => %w(ensure),
-        :valid   => %w(absent file),
-        :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
-        :message => 'gnomish::application::ensure must be <file> or <absent> and is set to',
+        name:    ['ensure'],
+        valid:   ['absent', 'file'],
+        invalid: ['string', ['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
+        message: 'gnomish::application::ensure must be <file> or <absent> and is set to',
       },
     }
 
@@ -209,16 +231,18 @@ describe 'gnomish::application' do
         var[:params] = {} if var[:params].nil?
         var[:valid].each do |valid|
           context "when #{var_name} (#{type}) is set to valid #{valid} (as #{valid.class})" do
-            let(:params) { [mandatory_params, var[:params], { :"#{var_name}" => valid, }].reduce(:merge) }
-            it { should compile }
+            let(:params) { [mandatory_params, var[:params], { "#{var_name}": valid, }].reduce(:merge) }
+
+            it { is_expected.to compile }
           end
         end
 
         var[:invalid].each do |invalid|
           context "when #{var_name} (#{type}) is set to invalid #{invalid} (as #{invalid.class})" do
-            let(:params) { [mandatory_params, var[:params], { :"#{var_name}" => invalid, }].reduce(:merge) }
-            it 'should fail' do
-              expect { should contain_class(subject) }.to raise_error(Puppet::Error, /#{var[:message]}/)
+            let(:params) { [mandatory_params, var[:params], { "#{var_name}": invalid, }].reduce(:merge) }
+
+            it 'fail' do
+              expect { is_expected.to contain_class(:subject) }.to raise_error(Puppet::Error, %r{#{var[:message]}})
             end
           end
         end

@@ -53,7 +53,7 @@ define gnomish::mate::mateconftool_2 (
   if is_string($key) == false {
     fail('gnomish::mate::mateconftool_2::key is not a string.')
   }
-  validate_re($type_real, '^(bool|int|float|string)$', "gnomish::mate::mateconftool_2::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to ${type_real}")
+  validate_re($type_real, '^(bool|int|float|string)$', "gnomish::mate::mateconftool_2::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to ${type_real}") #lint:ignore:140chars
 
   # functionality
   exec { "mateconftool-2 ${key}" :

@@ -43,8 +43,8 @@ The same is possible with system settings. Use `$gnomish::settings_xml` for both
 
 # Compatibility
 
-This module has been tested to work on the following systems with the latest Puppet v3, v3 with future parser, v4, v5 and v6.
-See `.travis.yml` for the exact matrix of supported Puppet and ruby versions.
+This module has been tested to work on the following systems with Puppet versions 5, 6 and 7 with the Ruby version associated
+with those releases. This module aims to support the current and previous major Puppet versions.
 
   * RHEL 6
   * RHEL 7

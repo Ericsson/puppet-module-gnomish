@@ -39,19 +39,19 @@ define gnomish::application (
 
     # check if mandatory metadata is given
     if $entry_categories == undef or $entry_categories == '' {
-      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.') #lint:ignore:140chars
     }
     if $entry_exec == undef or $entry_exec == '' {
-      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.') #lint:ignore:140chars
     }
     if $entry_icon == undef or $entry_icon == '' {
-      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.') #lint:ignore:140chars
     }
     if $entry_name == undef or $entry_name == '' {
-      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.') #lint:ignore:140chars
     }
     if $entry_type == undef or $entry_type == '' {
-      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.')
+      fail('when gnomish::application::ensure is set to <file> entry_categories, entry_exec, entry_icon, entry_name and entry_type needs to have valid values.') #lint:ignore:140chars
     }
   }
 
