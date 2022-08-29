@@ -246,49 +246,49 @@ describe 'gnomish' do
 
   describe 'variable type and content validations' do
     validations = {
-      'absolute_path' => {
-        name:    ['wallpaper_path'],
-        valid:   ['/absolute/filepath', '/absolute/directory/'],
-        invalid: ['string', ['array'], { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
-        message: 'is not an absolute path',
-      },
-      'array' => {
+      'Array' => {
         name:    ['packages_add', 'packages_remove'],
         valid:   [['array']],
-        invalid: ['string', { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'is not an Array',
+        invalid: ['string', { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects an Array',
       },
-      'boolean' => {
+      'Boolean' => {
         name:    ['applications_hiera_merge', 'settings_xml_hiera_merge'],
         valid:   [true, false],
-        invalid: ['true', 'false', 'string', ['array'], { 'ha' => 'sh' }, 3, 2.42, nil],
-        message: '(is not a boolean|Unknown type of boolean given)',
+        invalid: ['false', 'string', ['array'], { 'ha' => 'sh' }, 3, 2.42],
+        message: 'expects a Boolean',
       },
-      'hash' => {
+      'Enum[gnome, mate]' => {
+        name:    ['desktop'],
+        valid:   ['gnome', 'mate'],
+        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects a match for Enum',
+      },
+      'Hash' => {
         name:    ['applications', 'settings_xml'],
         params:  { applications_hiera_merge: false, settings_xml_hiera_merge: false },
         valid:   [], # valid hashes are to complex to block test them here.
-        invalid: ['string', 3, 2.42, ['array'], true, false, nil],
-        message: 'is not a Hash',
+        invalid: ['string', 3, 2.42, ['array'], false],
+        message: 'expects a Hash',
       },
-      'regex desktop' => {
-        name:    ['desktop'],
-        valid:   ['gnome', 'mate'],
-        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'must be <gnome> or <mate> and is set to',
+      'Optional[Stdlib::Filesource]' => {
+        name:    ['wallpaper_source'],
+        params:  { wallpaper_path: '/test/ing' },
+        valid:   ['puppet:///test', '/test/ing', 'file:///test/ing'],
+        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects a Stdlib::Filesource',
       },
-      'string' => {
+      'Stdlib::Absolutepath' => {
+        name:    ['wallpaper_path'],
+        valid:   ['/absolute/filepath', '/absolute/directory/'],
+        invalid: ['../invalid', ['/in/valid'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects a Stdlib::Absolutepath',
+      },
+      'String[1]' => {
         name:    ['gconf_name'],
         valid:   ['string'],
-        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'is not a string',
-      },
-      'string wallpaper_source' => {
-        name:    ['wallpaper_source'],
-        params:  { wallpaper_path: '/dst/rspec.png' },
-        valid:   ['/src/rspec.png'],
-        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'is not a string',
+        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: '(expects a String value|value of type Undef or String)',
       },
     }
 

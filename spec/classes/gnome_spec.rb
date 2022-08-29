@@ -154,30 +154,30 @@ describe 'gnomish::gnome' do
 
   describe 'variable type and content validations' do
     validations = {
-      'absolute_path' => {
-        name:    ['system_items_path'],
-        valid:   ['/absolute/filepath', '/absolute/directory/'],
-        invalid: ['string', ['array'], { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
-        message: 'is not an absolute path',
-      },
-      'boolean' => {
+      'Boolean' => {
         name:    ['applications_hiera_merge', 'settings_xml_hiera_merge', 'system_items_modify'],
         valid:   [true, false],
-        invalid: ['true', 'false', 'string', ['array'], { 'ha' => 'sh' }, 3, 2.42, nil],
-        message: '(is not a boolean|Unknown type of boolean given)',
+        invalid: ['false', 'string', ['array'], { 'ha' => 'sh' }, 3, 2.42],
+        message: 'expects a Boolean',
       },
-      'hash' => {
+      'Hash' => {
         name:    ['applications', 'settings_xml'],
         params:  { applications_hiera_merge: false, settings_xml_hiera_merge: false },
         valid:   [], # valid hashes are to complex to block test them here.
-        invalid: ['string', 3, 2.42, ['array'], true, false, nil],
-        message: 'is not a Hash',
+        invalid: ['string', 3, 2.42, ['array'], false],
+        message: 'expects a Hash',
       },
-      'string' => {
+      'Stdlib::Absolutepath' => {
+        name:    ['system_items_path'],
+        valid:   ['/absolute/filepath', '/absolute/directory/'],
+        invalid: ['../invalid', ['/in/valid'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects a Stdlib::Absolutepath',
+      },
+      'Stdlib::Filesource' => {
         name:    ['system_items_source'],
-        valid:   ['string'],
-        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'is not a string',
+        valid:   ['puppet:///test', '/test/ing', 'file:///test/ing'],
+        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects a Stdlib::Filesource',
       },
     }
 

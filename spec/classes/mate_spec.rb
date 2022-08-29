@@ -115,18 +115,18 @@ describe 'gnomish::mate' do
 
   describe 'variable type and content validations' do
     validations = {
-      'boolean' => {
+      'Boolean' => {
         name:    ['applications_hiera_merge', 'settings_xml_hiera_merge'],
         valid:   [true, false],
-        invalid: ['true', 'false', 'string', ['array'], { 'ha' => 'sh' }, 3, 2.42, nil],
-        message: '(is not a boolean|Unknown type of boolean given)',
+        invalid: ['false', 'string', ['array'], { 'ha' => 'sh' }, 3, 2.42],
+        message: 'expects a Boolean',
       },
-      'hash' => {
+      'Hash' => {
         name:    ['applications', 'settings_xml'],
         params:  { applications_hiera_merge: false, settings_xml_hiera_merge: false },
         valid:   [], # valid hashes are to complex to block test them here.
-        invalid: ['string', 3, 2.42, ['array'], true, false, nil],
-        message: 'is not a Hash',
+        invalid: ['string', 3, 2.42, ['array'], false],
+        message: 'expects a Hash',
       },
     }
 

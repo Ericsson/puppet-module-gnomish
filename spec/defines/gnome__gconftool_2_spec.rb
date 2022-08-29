@@ -109,29 +109,29 @@ describe 'gnomish::gnome::gconftool_2' do
   describe 'variable type and content validations' do
     validations = {
       # shortcuts defaults/mandatory will be accepted and auto converted
-      'absolute_path' => {
-        name:    ['config'],
-        valid:   ['defaults', 'mandatory', '/absolute/filepath', '/absolute/directory/'],
-        invalid: ['string', ['array'], { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
-        message: 'is not an absolute path',
-      },
-      'string' => {
-        name:    ['key'],
-        valid:   ['string'],
-        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'is not a string',
-      },
-      'stringified' => {
-        name:    ['value'],
-        valid:   ['string', 3, 2.42, true, false],
-        invalid: [['array'], { 'ha' => 'sh' }],
-        message: 'is not a string',
-      },
-      'regex type' => {
+      'Enum[auto, bool, int, float, string]' => {
         name:    ['type'],
         valid:   ['auto', 'bool', 'int', 'float', 'string'],
-        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'gnomish::gnome::gconftool_2::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to',
+        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'Enum\[\'auto\', \'bool\', \'float\', \'int\', \'string\'\]',
+      },
+      'String[1]' => {
+        name:    ['key'],
+        valid:   ['string'],
+        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects a String',
+      },
+      'Variant[Boolean, Float, Integer, String[1]]' => {
+        name:    ['value'],
+        valid:   [true, false, 2.42, 3, false, 'string'],
+        invalid: [['array'], { 'ha' => 'sh' }],
+        message: 'type Boolean, Float, Integer, or String,',
+      },
+      'Variant[Stdlib::Absolutepath, Enum[defaults, mandatory]' => {
+        name:    ['config'],
+        valid:   ['/test/ing', 'defaults', 'mandatory'],
+        invalid: ['in/valid', ['array'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'Stdlib::Absolutepath.* or Enum\[\'defaults\', \'mandatory\'\]',
       },
     }
 

@@ -188,41 +188,41 @@ describe 'gnomish::application' do
 
   describe 'variable type and content validations' do
     validations = {
-      'absolute_path' => {
-        name:    ['path'],
-        valid:   ['/absolute/filepath', '/absolute/directory/'],
-        invalid: ['string', ['array'], { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
-        message: 'is not an absolute path',
-      },
-      'array' => {
+      'Array' => {
         name:    ['entry_lines'],
         valid:   [['array']],
-        invalid: ['string', { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'is not an Array',
+        invalid: ['string', { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects an Array',
       },
-      'boolean' => {
+      'Boolean' => {
         name:    ['entry_terminal'],
         valid:   [true, false],
-        invalid: ['true', 'false', 'string', ['array'], { 'ha' => 'sh' }, 3, 2.42, nil],
-        message: '(is not a boolean|Unknown type of boolean given)',
+        invalid: ['false', 'string', ['array'], { 'ha' => 'sh' }, 3, 2.42],
+        message: 'expects a Boolean',
       },
-      'string / array' => {
-        name:    ['entry_mimetype'],
-        valid:   ['string', ['array']],
-        invalid: [{ 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'is not a string nor an array',
-      },
-      'string' => {
-        name:    ['entry_categories', 'entry_exec', 'entry_icon', 'entry_name', 'entry_type'],
-        valid:   ['string'],
-        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'is not a string',
-      },
-      'regex ensure' => {
+      'Enum[absent, file]' => {
         name:    ['ensure'],
         valid:   ['absent', 'file'],
-        invalid: ['string', ['array'], { 'ha' => 'sh' }, 3, 2.42, true, false],
-        message: 'gnomish::application::ensure must be <file> or <absent> and is set to',
+        invalid: ['string', ['array'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'Enum\[\'absent\', \'file\'\]',
+      },
+      'Stdlib::Absolutepath' => {
+        name:    ['path'],
+        valid:   ['/absolute/filepath', '/absolute/directory/'],
+        invalid: ['../invalid', ['/in/valid'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects a Stdlib::Absolutepath',
+      },
+      'String[1]' => {
+        name:    ['entry_categories', 'entry_exec', 'entry_icon', 'entry_name', 'entry_type'],
+        valid:   ['string'],
+        invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, false],
+        message: '(expects a String value|value of type Undef or String)',
+      },
+      'Variant[Array, String[1]]' => {
+        name:    ['entry_mimetype'],
+        valid:   ['string', ['array']],
+        invalid: [{ 'ha' => 'sh' }, 3, 2.42, false],
+        message: 'expects a value of type Undef, Array, or String',
       },
     }
 
