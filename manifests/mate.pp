@@ -59,17 +59,7 @@ class gnomish::mate (
     $settings_xml_real = $settings_xml
   }
 
-  # variable validations
-  validate_bool(
-    $applications_hiera_merge,
-    $settings_xml_hiera_merge,
-  )
-
-  validate_hash(
-    $applications_real,
-    $settings_xml_real,
-  )
-
+  # functionality
   exec { 'update-desktop-database' :
     command     => '/usr/bin/update-desktop-database',
     path        => $facts['path'],

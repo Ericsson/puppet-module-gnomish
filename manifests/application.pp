@@ -89,21 +89,8 @@ define gnomish::application (
   String[1]                 $entry_type       = 'Application',
   Optional[Variant[Array, String[1]]] $entry_mimetype   = undef,
 ) {
-  # <Variable validation>
-  validate_absolute_path($path)
-  validate_re($ensure,'^(absent|file)$', "gnomish::application::ensure must be <file> or <absent> and is set to ${ensure}.")
-
   # validate mandatory application settings only when needed
   if $ensure == 'file' {
-    validate_array($entry_lines)
-    validate_bool($entry_terminal)
-
-    if is_string($entry_categories) == false { fail('gnomish::application::entry_categories is not a string.') }
-    if is_string($entry_exec)       == false { fail('gnomish::application::entry_exec is not a string.') }
-    if is_string($entry_icon)       == false { fail('gnomish::application::entry_icon is not a string.') }
-    if is_string($entry_name)       == false { fail('gnomish::application::entry_name is not a string.') }
-    if is_string($entry_type)       == false { fail('gnomish::application::entry_type is not a string.') }
-
     case type3x($entry_mimetype) {
       []:       { $entry_mimetype_string = undef }
       'string': { $entry_mimetype_string = $entry_mimetype }
@@ -129,7 +116,7 @@ define gnomish::application (
     }
   }
 
-  # <functionality>
+  # functionality
   # ensure that no basic settings sneaked in with $entry_lines to avoid duplicates
   if size($entry_lines) != size(reject($entry_lines, '^(?i:Name|Icon|Exec|Categories|Type|Terminal)=.*')) {
     fail('gnomish::application::entry_lines does contain one of the basic settings. Please use the specific $entry_* parameter instead.')

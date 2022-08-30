@@ -87,31 +87,6 @@ class gnomish (
     $settings_xml_hiera = $settings_xml
   }
 
-  # variable validations
-  validate_array(
-    $packages_add,
-    $packages_remove,
-  )
-
-  validate_bool(
-    $applications_hiera_merge,
-    $settings_xml_hiera_merge,
-  )
-
-  validate_hash(
-    $applications_real,
-    $settings_xml_hiera,
-  )
-
-  if is_string($gconf_name)       == false { fail('gnomish::gconf_name is not a string.') }
-  if is_string($wallpaper_source) == false { fail('gnomish::wallpaper_source is not a string.') }
-
-  validate_re($desktop, '^(gnome|mate)$', "gnomish::desktop must be <gnome> or <mate> and is set to ${desktop}")
-
-  if $wallpaper_path != undef {
-    validate_absolute_path($wallpaper_path)
-  }
-
   # conditional checks
   if $wallpaper_source != undef and $wallpaper_path == undef {
     fail('gnomish::wallpaper_path is needed but undefiend. Please define a valid path.')

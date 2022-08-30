@@ -83,14 +83,6 @@ define gnomish::mate::mateconftool_2 (
     default     => $config,
   }
 
-  # variable validation
-  validate_string($value_string)
-  validate_absolute_path($config_real)
-  if is_string($key) == false {
-    fail('gnomish::mate::mateconftool_2::key is not a string.')
-  }
-  validate_re($type_real, '^(bool|int|float|string)$', "gnomish::mate::mateconftool_2::type must be one of <bool>, <int>, <float>, <string> or <auto> and is set to ${type_real}") #lint:ignore:140chars
-
   # functionality
   exec { "mateconftool-2 ${key}" :
     command => "mateconftool-2 --direct --config-source xml:readwrite:${config_real} --set '${key}' --type ${type_real} '${value_string}'",

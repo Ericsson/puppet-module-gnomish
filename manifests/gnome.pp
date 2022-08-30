@@ -59,22 +59,7 @@ class gnomish::gnome (
     $settings_xml_real = $settings_xml
   }
 
-  # variable validations
-  validate_absolute_path($system_items_path)
-
-  validate_bool(
-    $system_items_modify,
-    $applications_hiera_merge,
-    $settings_xml_hiera_merge,
-  )
-
-  validate_hash(
-    $applications_real,
-    $settings_xml_real,
-  )
-
-  if is_string($system_items_source) == false { fail('gnomish::gnome::system_items_source is not a string.') }
-
+  # functionality
   if $system_items_modify == true {
     file { 'modified system items' :
       ensure => file,
