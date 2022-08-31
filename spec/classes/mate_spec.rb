@@ -55,6 +55,7 @@ describe 'gnomish::mate' do
             },
           )
         end
+        it { is_expected.to contain_file('desktop_app_from_param') } # only needed for 100% resource coverage
       end
     end
 
@@ -80,6 +81,8 @@ describe 'gnomish::mate' do
 
         it { is_expected.to have_gnomish__mate__mateconftool_2_resource_count(1) }
         it { is_expected.to contain_gnomish__mate__mateconftool_2('from_param').with_value('from_param') }
+
+        it { is_expected.to contain_exec('mateconftool-2 from_param') } # only needed for 100% resource coverage
       end
     end
 
@@ -99,6 +102,11 @@ describe 'gnomish::mate' do
         it { is_expected.to have_gnomish__mate__mateconftool_2_resource_count(2) }
         it { is_expected.to contain_gnomish__mate__mateconftool_2('from_hiera_class_mate_specific') }
         it { is_expected.to contain_gnomish__mate__mateconftool_2('from_hiera_fqdn_mate_specific') }
+
+        it { is_expected.to contain_exec('mateconftool-2 /rspec_from_hiera_class_mate_specific') } # only needed for 100% resource coverage
+        it { is_expected.to contain_exec('mateconftool-2 /rspec_from_hiera_fqdn_mate_specific') }  # only needed for 100% resource coverage
+        it { is_expected.to contain_file('desktop_app_from_hiera_class_mate_specific') }           # only needed for 100% resource coverage
+        it { is_expected.to contain_file('desktop_app_from_hiera_fqdn_mate_specific') }            # only needed for 100% resource coverage
       end
 
       context 'with applications_hiera_merge set to valid <false>' do

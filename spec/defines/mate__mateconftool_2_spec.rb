@@ -134,7 +134,7 @@ describe 'gnomish::mate::mateconftool_2' do
         },
         'String[1]' => {
           name:    ['key'],
-          valid:   ['string'],
+          valid:   ['/rspec/testing'],
           invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, false],
           message: 'expects a String',
         },

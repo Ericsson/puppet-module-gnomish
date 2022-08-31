@@ -48,6 +48,8 @@ describe 'gnomish' do
             },
           )
         end
+        it { is_expected.to contain_exec('update-desktop-database') } # only needed for 100% resource coverage
+        it { is_expected.to contain_file('desktop_app_from_param') }  # only needed for 100% resource coverage
       end
     end
 
@@ -62,6 +64,7 @@ describe 'gnomish' do
 
       it { is_expected.to contain_class('gnomish::gnome') }
       it { is_expected.to contain_gnomish__gnome__gconftool_2('set wallpaper').with_key('/desktop/gnome/background/picture_filename') }
+      it { is_expected.to contain_exec('gconftool-2 /desktop/gnome/background/picture_filename') } # only needed for 100% resource coverage
 
       it do
         is_expected.to contain_file('wallpaper').with(
@@ -84,6 +87,7 @@ describe 'gnomish' do
       it { is_expected.to contain_class('gnomish::mate') }
       it { is_expected.to contain_gnomish__mate__mateconftool_2('set wallpaper').with_key('/desktop/mate/background/picture_filename') }
       it { is_expected.to contain_file('wallpaper').with_before('Gnomish::Mate::Mateconftool_2[set wallpaper]') }
+      it { is_expected.to contain_exec('mateconftool-2 /desktop/mate/background/picture_filename') } # only needed for 100% resource coverage
     end
 
     describe "on #{os} with gconf_name set to valid string <$(HOME)/.gconf-rspec>" do
@@ -101,10 +105,10 @@ describe 'gnomish' do
       end
     end
 
-    describe "on #{os} with packages_add set to valid array %w(rspec testing)" do
-      let(:params) { { packages_add: ['rspec', 'testing'] } }
+    describe "on #{os} with packages_add set to valid array %w(rspec array)" do
+      let(:params) { { packages_add: ['rspec', 'array'] } }
 
-      ['rspec', 'testing'].each do |package|
+      ['rspec', 'array'].each do |package|
         it { is_expected.to contain_package(package).with_ensure('present') }
       end
     end
@@ -139,6 +143,7 @@ describe 'gnomish' do
 
         it { is_expected.to have_gnomish__gnome__gconftool_2_resource_count(1) }
         it { is_expected.to contain_gnomish__gnome__gconftool_2('from_param').with_value('from_param') }
+        it { is_expected.to contain_exec('gconftool-2 from_param') } # only needed for 100% resource coverage
       end
     end
 
@@ -210,6 +215,15 @@ describe 'gnomish' do
         it { is_expected.to contain_gnomish__gnome__gconftool_2('from_hiera_fqdn_gnome_specific') }
 
         it { is_expected.to have_gnomish__mate__mateconftool_2_resource_count(0) }
+
+        it { is_expected.to contain_file('desktop_app_from_hiera_class') }                      # only needed for 100% resource coverage
+        it { is_expected.to contain_file('desktop_app_from_hiera_fqdn') }                       # only needed for 100% resource coverage
+        it { is_expected.to contain_file('desktop_app_from_hiera_class_gnome_specific') }       # only needed for 100% resource coverage
+        it { is_expected.to contain_file('desktop_app_from_hiera_fqdn_gnome_specific') }        # only needed for 100% resource coverage
+        it { is_expected.to contain_exec('gconftool-2 /rspec_from_hiera_class') }               # only needed for 100% resource coverage
+        it { is_expected.to contain_exec('gconftool-2 /rspec_from_hiera_fqdn') }                # only needed for 100% resource coverage
+        it { is_expected.to contain_exec('gconftool-2 /rspec_from_hiera_fqdn_gnome_specific') } # only needed for 100% resource coverage
+        it { is_expected.to contain_exec('gconftool-2 /rspec_from_hiera_class_mate_specific') } # only needed for 100% resource coverage
       end
 
       context 'with applications_hiera_merge set to valid <false>' do

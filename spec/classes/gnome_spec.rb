@@ -55,6 +55,7 @@ describe 'gnomish::gnome' do
             },
           )
         end
+        it { is_expected.to contain_file('desktop_app_from_param') } # only needed for 100% resource coverage
       end
     end
 
@@ -80,6 +81,7 @@ describe 'gnomish::gnome' do
 
         it { is_expected.to have_gnomish__gnome__gconftool_2_resource_count(1) }
         it { is_expected.to contain_gnomish__gnome__gconftool_2('from_param').with_value('from_param') }
+        it { is_expected.to contain_exec('gconftool-2 from_param') } # only needed for 100% resource coverage
       end
     end
 
@@ -138,6 +140,11 @@ describe 'gnomish::gnome' do
         it { is_expected.to have_gnomish__gnome__gconftool_2_resource_count(2) }
         it { is_expected.to contain_gnomish__gnome__gconftool_2('from_hiera_class_gnome_specific') }
         it { is_expected.to contain_gnomish__gnome__gconftool_2('from_hiera_fqdn_gnome_specific') }
+
+        it { is_expected.to contain_exec('gconftool-2 /rspec_from_hiera_class_mate_specific') } # only needed for 100% resource coverage
+        it { is_expected.to contain_exec('gconftool-2 /rspec_from_hiera_fqdn_gnome_specific') } # only needed for 100% resource coverage
+        it { is_expected.to contain_file('desktop_app_from_hiera_class_gnome_specific') }       # only needed for 100% resource coverage
+        it { is_expected.to contain_file('desktop_app_from_hiera_fqdn_gnome_specific') }        # only needed for 100% resource coverage
       end
 
       context 'with applications_hiera_merge set to valid <false>' do
