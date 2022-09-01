@@ -42,25 +42,30 @@ define gnomish::gnome::gconftool_2 (
   Enum['auto', 'bool', 'int', 'float', 'string']               $type   = 'auto',
 ) {
   # variable preparation
-  case type3x($value) {
-    'boolean':         {
+  case $value {
+    Boolean:         {
       $value_string = bool2str($value)
       $value_type = 'bool'
     }
-    'integer': {
+    Integer: {
       $value_string = sprintf('%g', $value)
       $value_type = 'int'
     }
-    'float': {
+    Float: {
       $value_string = sprintf('%g', $value)
       $value_type = 'float'
     }
-    'string': {
+    String: {
       if $value =~ /^(true|false)$/ {
         $value_string = $value
         $value_type = 'bool'
-      }
-      else {
+      } elsif is_float($value.sprintf('%d')) == true {
+        $value_string = sprintf('%g', $value)
+        $value_type = 'float'
+      } elsif is_integer($value.sprintf('%d')) == true {
+        $value_string = sprintf('%g', $value)
+        $value_type = 'int'
+      } else {
         $value_string = $value
         $value_type = 'string'
       }

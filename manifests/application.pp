@@ -91,11 +91,11 @@ define gnomish::application (
 ) {
   # validate mandatory application settings only when needed
   if $ensure == 'file' {
-    case type3x($entry_mimetype) {
-      []:       { $entry_mimetype_string = undef }
-      'string': { $entry_mimetype_string = $entry_mimetype }
-      'array':  { $entry_mimetype_string = join($entry_mimetype, ';') }
-      default:  { fail('gnomish::application::entry_mimetype is not a string nor an array.') }
+    case $entry_mimetype {
+      undef:   { $entry_mimetype_string = undef }
+      String:  { $entry_mimetype_string = $entry_mimetype }
+      Array:   { $entry_mimetype_string = join($entry_mimetype, ';') }
+      default: { fail('gnomish::application::entry_mimetype is not a string nor an array.') }
     }
 
     # check if mandatory metadata is given
