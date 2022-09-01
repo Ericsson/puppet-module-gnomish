@@ -72,7 +72,7 @@ define gnomish::mate::mateconftool_2 (
         $value_type = 'string'
       }
     }
-    default: { fail('gnomish::gnome::gconftool_2::value is not a string.') }
+    default: { fail('gnomish::mate::mateconftool_2::value is not a string.') }
   }
 
   if $type == 'auto' {
