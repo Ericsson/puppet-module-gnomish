@@ -518,6 +518,7 @@ to one of the other valid values of *bool*, *int*, *float* or *string*.
 ---
 # Changelog
 
+* 1.3.0 Support Puppet 8, remove support for Puppet v6 and older
 * 1.2.1 Support Puppet 6
 * 1.2.0 Support Puppet 5
 * 1.1.1 Support Puppet up to 4.9
