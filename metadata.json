@@ -1,6 +1,6 @@
 {
   "name": "kodguru-gnomish",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "author": "kodguru",
   "summary": "Manage Gnome 2.x & Mate 1.x Desktop application icons and settings",
   "license": "Apache-2.0",
