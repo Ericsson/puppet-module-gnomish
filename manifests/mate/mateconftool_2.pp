@@ -38,7 +38,7 @@
 #   this by setting type to one of the other valid values of bool, int, float or string.
 #
 define gnomish::mate::mateconftool_2 (
-  Variant[Boolean, Float, Integer, String[1]]                  $value,
+  Variant[Boolean, Float, Integer, String]                     $value,
   Variant[Stdlib::Absolutepath, Enum['defaults', 'mandatory']] $config = 'defaults',
   String[1]                                                    $key    = $title,
   Enum['auto', 'bool', 'int', 'float', 'string']               $type   = 'auto',

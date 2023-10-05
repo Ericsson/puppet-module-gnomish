@@ -137,9 +137,9 @@ describe 'gnomish::gnome::gconftool_2' do
           invalid: [['array'], { 'ha' => 'sh' }, 3, 2.42, false],
           message: 'expects a String',
         },
-        'Variant[Boolean, Float, Integer, String[1]]' => {
+        'Variant[Boolean, Float, Integer, String]' => {
           name:    ['value'],
-          valid:   [true, false, 2.42, 3, false, 'string'],
+          valid:   [true, false, 2.42, 3, false, 'string', ''],
           invalid: [['array'], { 'ha' => 'sh' }],
           message: 'type Boolean, Float, Integer, or String,',
         },
