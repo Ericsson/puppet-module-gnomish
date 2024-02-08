@@ -42,35 +42,15 @@ define gnomish::gnome::gconftool_2 (
   Enum['auto', 'bool', 'int', 'float', 'string']               $type   = 'auto',
 ) {
   # variable preparation
-  case $value {
-    Boolean:         {
-      $value_string = bool2str($value)
-      $value_type = 'bool'
-    }
-    Integer: {
-      $value_string = sprintf('%g', $value)
-      $value_type = 'int'
-    }
-    Float: {
-      $value_string = sprintf('%g', $value)
-      $value_type = 'float'
-    }
-    String: {
-      if $value =~ /^(true|false)$/ {
-        $value_string = $value
-        $value_type = 'bool'
-      } elsif is_float($value.sprintf('%d')) == true {
-        $value_string = sprintf('%g', $value)
-        $value_type = 'float'
-      } elsif is_integer($value.sprintf('%d')) == true {
-        $value_string = sprintf('%g', $value)
-        $value_type = 'int'
-      } else {
-        $value_string = $value
-        $value_type = 'string'
-      }
-    }
-    default: { fail('gnomish::gnome::gconftool_2::value is not a string.') }
+  [$value_string, $value_type] = case $value {
+    Boolean:                   {[String($value), 'bool'] }
+    Integer:                   {[String($value), 'int'] }
+    Float:                     {[String($value, '%g'), 'float'] }
+    Pattern[/^(true|false)$/]: {[$value, 'bool'] }
+    Pattern[/^\d+\.\d+$/]:     {[$value, 'float'] }
+    Pattern[/^\d+$/]:          {[$value, 'int'] }
+    String:                    {[$value, 'string'] }
+    default:                   { fail('gnomish::gnome::gconftool_2::value is not valid.') }
   }
 
   if $type == 'auto' {
