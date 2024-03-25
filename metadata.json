@@ -1,11 +1,11 @@
 {
-  "name": "kodguru-gnomish",
+  "name": "ericsson-gnomish",
   "version": "1.3.2",
-  "author": "kodguru",
+  "author": "ericsson",
   "summary": "Manage Gnome 2.x & Mate 1.x Desktop application icons and settings",
   "license": "Apache-2.0",
-  "source": "https://github.com/kodguru/puppet-module-gnomish.git",
-  "project_page": "https://github.com/kodguru/puppet-module-gnomish",
+  "source": "https://github.com/ericsson/puppet-module-gnomish.git",
+  "project_page": "https://github.com/ericsson/puppet-module-gnomish",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
